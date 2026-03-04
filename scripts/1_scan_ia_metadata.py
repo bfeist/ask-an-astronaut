@@ -7,6 +7,7 @@ import argparse
 import math
 import sys
 import time
+from datetime import datetime, timezone
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -19,8 +20,8 @@ from astro_ia_harvest.config import (  # noqa: E402
     IA_UPLOADERS,
     ensure_directories,
 )
-from astro_ia_harvest.ia_api import build_records, fetch_item_metadata, search_identifiers  # noqa: E402
-from astro_ia_harvest.jsonl_utils import append_jsonl  # noqa: E402
+from astro_ia_harvest.ia_api import build_records, fetch_item_metadata, search_identifiers, search_updated_identifiers  # noqa: E402
+from astro_ia_harvest.jsonl_utils import append_jsonl, remove_identifiers_from_jsonl  # noqa: E402
 
 
 def load_seen_identifiers() -> set[str]:
@@ -112,6 +113,31 @@ def main() -> None:
     print("STEP 1: Scan IA Metadata")
     print("=" * 70)
     print(f"Seen identifiers: {len(seen)}")
+
+    # Automatically rescan identifiers that were updated on IA since the last run.
+    if seen and IA_PROGRESS_FILE.exists():
+        last_run_ts = IA_PROGRESS_FILE.stat().st_mtime
+        since_date = datetime.fromtimestamp(last_run_ts, tz=timezone.utc).strftime("%Y-%m-%d")
+        print(f"\nLooking for items updated since last run ({since_date}) ...")
+        stale: set[str] = set()
+        for query in queries:
+            updated = search_updated_identifiers(query, since_date)
+            newly_stale = updated & seen
+            stale |= newly_stale
+            if newly_stale:
+                print(f"  {query}: {len(newly_stale)} stale identifier(s): {', '.join(sorted(newly_stale))}")
+        if stale:
+            removed = remove_identifiers_from_jsonl(IA_METADATA_JSONL, stale)
+            for ident in stale:
+                seen.discard(ident)
+            lines = IA_PROGRESS_FILE.read_text(encoding="utf-8").splitlines()
+            IA_PROGRESS_FILE.write_text(
+                "\n".join(l for l in lines if l.strip() not in stale) + "\n",
+                encoding="utf-8",
+            )
+            print(f"  Removed {removed} stale record(s) from metadata; will re-scan {len(stale)} identifier(s).")
+        else:
+            print("  No updated items found since last run.")
 
     total_new_ids = 0
     total_written = 0
