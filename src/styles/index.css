@@ -42,7 +42,7 @@ body {
 .app {
   max-width: 1400px;
   margin: 0 auto;
-  padding: 24px 32px;
+  padding: 15px 32px 0 32px;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
@@ -79,6 +79,10 @@ body {
 @media (width <= 900px) {
   .app-main {
     grid-template-columns: 1fr;
+  }
+
+  .player-panel {
+    order: -1;
   }
 }
 
@@ -304,7 +308,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 300px;
+  min-height: 100px;
   border: 2px dashed var(--border);
   color: var(--text-muted);
   font-size: 14px;

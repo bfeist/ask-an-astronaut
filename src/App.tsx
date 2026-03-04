@@ -75,6 +75,11 @@ function App(): React.JSX.Element {
 
   const handleSelect = useCallback((result: SearchResult) => {
     setSelectedResult(result);
+    // Scroll to top to ensure video player is visible, especially on iOS Safari
+    // which auto-scrolls inputs into view
+    setTimeout(() => {
+      window.scrollTo(0, 0);
+    }, 0);
   }, []);
 
   const handleCloseVideo = useCallback(() => {

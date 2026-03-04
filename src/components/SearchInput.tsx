@@ -44,6 +44,16 @@ export default function SearchInput({
     onSearch("");
   };
 
+  const handleBlur = () => {
+    // On iOS Safari, when input loses focus, scroll to ensure
+    // video player is visible (since iOS auto-scrolls inputs into view)
+    if (window.innerWidth < 900) {
+      setTimeout(() => {
+        window.scrollTo(0, 0);
+      }, 100);
+    }
+  };
+
   return (
     <div className="search-input-wrapper">
       <input
@@ -56,6 +66,7 @@ export default function SearchInput({
         // eslint-disable-next-line jsx-a11y/no-autofocus
         autoFocus
         spellCheck={false}
+        onBlur={handleBlur}
       />
       {value && (
         <button

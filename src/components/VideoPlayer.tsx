@@ -119,6 +119,7 @@ function VideoPlayerInner({
             className="video-element"
             src={result.videoUrl}
             controls
+            playsInline
             onLoadedData={handleLoaded}
             onError={handleError}
             onTimeUpdate={handleTimeUpdate}

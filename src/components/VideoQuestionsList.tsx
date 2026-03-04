@@ -28,10 +28,22 @@ export default function VideoQuestionsList({
 }: Props): React.JSX.Element {
   const questions = useMemo(() => getQuestionsForVideo(sourceFile), [sourceFile]);
   const activeRef = useRef<HTMLButtonElement>(null);
+  const listRef = useRef<HTMLDivElement>(null);
 
-  // Scroll the active question into view on mount
+  // Scroll the active question into view within the list container only
   useEffect(() => {
-    activeRef.current?.scrollIntoView({ block: "nearest", behavior: "smooth" });
+    const item = activeRef.current;
+    const list = listRef.current;
+    if (!item || !list) return;
+    const itemTop = item.offsetTop;
+    const itemBottom = itemTop + item.offsetHeight;
+    const listTop = list.scrollTop;
+    const listBottom = listTop + list.clientHeight;
+    if (itemTop < listTop) {
+      list.scrollTop = itemTop;
+    } else if (itemBottom > listBottom) {
+      list.scrollTop = itemBottom - list.clientHeight;
+    }
   }, [activeQuestionId]);
 
   if (questions.length <= 1) {
@@ -41,7 +53,7 @@ export default function VideoQuestionsList({
   return (
     <div className="video-questions">
       <div className="video-questions-header">Questions in this video ({questions.length})</div>
-      <div className="video-questions-list">
+      <div className="video-questions-list" ref={listRef}>
         {questions.map((q, i) => {
           const isActive = q.id === activeQuestionId;
           return (

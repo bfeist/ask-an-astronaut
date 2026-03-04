@@ -25,9 +25,7 @@ const EMBEDDINGS_URL = `${STATIC_ORIGIN}/static_assets/data/search_index/embeddi
 // ---------------------------------------------------------------------------
 let _meta: IndexMeta | null = null;
 let _questions: IndexQuestion[] | null = null;
-// Raw float16 stored as Uint16Array to halve memory vs Float32Array.
-// Values are decoded to float32 on the fly during dot-product scoring.
-let _embeddings: Uint16Array | null = null; // (num_questions × dim) row-major
+let _embeddings: Float32Array | null = null; // (num_questions × dim) row-major, pre-widened from float16
 let _extractor: Extractor | null = null;
 
 let _initPromise: Promise<void> | null = null;
@@ -66,21 +64,19 @@ export async function loadIndex(onProgress?: (p: InitProgress) => void): Promise
     const embRes = await fetch(EMBEDDINGS_URL);
     const embBuf = await embRes.arrayBuffer();
 
-    // Keep embeddings as raw Uint16Array (float16 bit patterns) to halve
-    // memory vs widening to Float32Array upfront.  Values are converted
-    // to float32 one element at a time inside the dot-product loop
-    // — negligible compute cost, ~7.7 MB saved on a 10 k-question index.
+    // Widen float16 → float32 once at load time for fast dot-product scoring.
     const dim = _meta.embedding_dim;
     const numQuestions = _meta.num_questions;
 
     if (_meta.embedding_dtype === "float16") {
-      // Slice so GC can release the original ArrayBuffer sooner.
-      _embeddings = new Uint16Array(embBuf.slice(0));
+      const f16 = new Uint16Array(embBuf);
+      const f32 = new Float32Array(f16.length);
+      for (let i = 0; i < f16.length; i++) {
+        f32[i] = float16ToFloat32(f16[i]);
+      }
+      _embeddings = f32;
     } else {
-      // float32 on disk: store as Uint16Array is not meaningful;
-      // widen normally and cast view — shouldn't happen in practice.
-      const f32 = new Float32Array(embBuf);
-      _embeddings = new Uint16Array(f32.buffer);
+      _embeddings = new Float32Array(embBuf);
     }
 
     // Sanity check
@@ -114,12 +110,21 @@ export async function loadModel(onProgress?: (p: InitProgress) => void): Promise
       message: "Loading semantic search model (all-MiniLM-L6-v2)…",
     });
 
-    const { pipeline } = await import("@huggingface/transformers");
-    // q8 quantisation cuts model memory ~75 % (≈23 MB vs ≈90 MB for fp32)
-    // with negligible impact on ranking quality — important for iOS Safari/Chrome.
-    _extractor = (await pipeline("feature-extraction", "Xenova/all-MiniLM-L6-v2", {
-      dtype: "q8",
-    })) as unknown as Extractor;
+    // @xenova/transformers v2 avoids the JSEP/ASYNCIFY WASM memory-balloon bug
+    // present in @huggingface/transformers v3 that crashes all iOS browsers.
+    // v2 uses the quantized (int8) model by default, so no dtype option is needed.
+    // https://github.com/huggingface/transformers.js/issues/1242
+    const { pipeline, env } = await import("@xenova/transformers");
+
+    // v2 checks /models/ locally first; the dev server returns an HTML 404 page
+    // which then fails JSON.parse.  Disable local lookup so it goes straight
+    // to the Hugging Face CDN.
+    env.allowLocalModels = false;
+
+    _extractor = (await pipeline(
+      "feature-extraction",
+      "Xenova/all-MiniLM-L6-v2"
+    )) as unknown as Extractor;
 
     onProgress?.({
       stage: "model",
@@ -191,15 +196,12 @@ export async function search(
   const numQ = _meta.num_questions;
 
   // Compute cosine similarity (dot product since both are unit-normalised).
-  // Embeddings are stored as raw float16 (Uint16Array); decode each value on
-  // the fly — ~3.9 M conversions per search, but saves 7.7 MB of heap vs
-  // a pre-widened Float32Array.
   const scores = new Float32Array(numQ);
   for (let i = 0; i < numQ; i++) {
     let dot = 0;
     const offset = i * dim;
     for (let j = 0; j < dim; j++) {
-      dot += queryVec[j] * float16ToFloat32(_embeddings[offset + j]);
+      dot += queryVec[j] * _embeddings[offset + j];
     }
     scores[i] = dot;
   }
