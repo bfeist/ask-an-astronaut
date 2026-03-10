@@ -28,6 +28,7 @@ export default function VideoQuestionsList({
 }: Props): React.JSX.Element {
   const questions = useMemo(() => getQuestionsForVideo(sourceFile), [sourceFile]);
   const activeRef = useRef<HTMLButtonElement>(null);
+  const listRef = useRef<HTMLDivElement>(null);
 
   const listRef = useRef<HTMLDivElement>(null);
 

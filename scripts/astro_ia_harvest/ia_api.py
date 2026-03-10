@@ -11,6 +11,24 @@ SEARCH_URL = "https://archive.org/advancedsearch.php"
 METADATA_URL = "https://archive.org/metadata"
 
 
+def search_updated_identifiers(base_query: str, since_date: str) -> set[str]:
+    """Return all identifiers matching *base_query* whose updatedate >= *since_date*.
+
+    *since_date* should be an ISO date string like ``'2026-02-20'``.
+    """
+    query = f"({base_query}) AND updatedate:[{since_date} TO null]"
+    found: set[str] = set()
+    page = 1
+    while True:
+        ids, total = search_identifiers(query, page=page)
+        found.update(ids)
+        if len(found) >= total or not ids:
+            break
+        page += 1
+        time.sleep(0.3)
+    return found
+
+
 def search_identifiers(query: str, page: int = 1, rows: int = IA_ROWS_PER_REQUEST) -> tuple[list[str], int]:
     params = {
         "q": query,

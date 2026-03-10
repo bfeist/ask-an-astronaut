@@ -25,7 +25,7 @@ const EMBEDDINGS_URL = `${STATIC_ORIGIN}/static_assets/data/search_index/embeddi
 // ---------------------------------------------------------------------------
 let _meta: IndexMeta | null = null;
 let _questions: IndexQuestion[] | null = null;
-let _embeddings: Float32Array | null = null; // (num_questions × dim) row-major
+let _embeddings: Float32Array | null = null; // (num_questions × dim) row-major, pre-widened from float16
 let _extractor: Extractor | null = null;
 
 let _initPromise: Promise<void> | null = null;
@@ -64,7 +64,7 @@ export async function loadIndex(onProgress?: (p: InitProgress) => void): Promise
     const embRes = await fetch(EMBEDDINGS_URL);
     const embBuf = await embRes.arrayBuffer();
 
-    // The Python pipeline stores float16—widen to float32 for dot-product math
+    // Widen float16 → float32 once at load time for fast dot-product scoring.
     const dim = _meta.embedding_dim;
     const numQuestions = _meta.num_questions;
 
@@ -110,10 +110,21 @@ export async function loadModel(onProgress?: (p: InitProgress) => void): Promise
       message: "Loading semantic search model (all-MiniLM-L6-v2)…",
     });
 
-    const { pipeline } = await import("@huggingface/transformers");
-    _extractor = (await pipeline("feature-extraction", "Xenova/all-MiniLM-L6-v2", {
-      dtype: "fp32",
-    })) as unknown as Extractor;
+    // @xenova/transformers v2 avoids the JSEP/ASYNCIFY WASM memory-balloon bug
+    // present in @huggingface/transformers v3 that crashes all iOS browsers.
+    // v2 uses the quantized (int8) model by default, so no dtype option is needed.
+    // https://github.com/huggingface/transformers.js/issues/1242
+    const { pipeline, env } = await import("@xenova/transformers");
+
+    // v2 checks /models/ locally first; the dev server returns an HTML 404 page
+    // which then fails JSON.parse.  Disable local lookup so it goes straight
+    // to the Hugging Face CDN.
+    env.allowLocalModels = false;
+
+    _extractor = (await pipeline(
+      "feature-extraction",
+      "Xenova/all-MiniLM-L6-v2"
+    )) as unknown as Extractor;
 
     onProgress?.({
       stage: "model",
@@ -184,7 +195,7 @@ export async function search(
   const dim = _meta.embedding_dim;
   const numQ = _meta.num_questions;
 
-  // Compute cosine similarity (dot product since both are unit-normalised)
+  // Compute cosine similarity (dot product since both are unit-normalised).
   const scores = new Float32Array(numQ);
   for (let i = 0; i < numQ; i++) {
     let dot = 0;

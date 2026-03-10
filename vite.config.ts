@@ -101,7 +101,7 @@ export default defineConfig({
   plugins: [react(), localMediaPlugin()],
   server: {
     host: "0.0.0.0",
-    port: 9300,
+    port: 9400,
     headers: {
       "Cross-Origin-Embedder-Policy": "require-corp",
       "Cross-Origin-Opener-Policy": "same-origin",
