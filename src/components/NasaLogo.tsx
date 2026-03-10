@@ -1,6 +1,6 @@
-import React from 'react';
+import React from "react";
 
-const NasaLogo = () => (
+const NasaLogo = (): React.JSX.Element => (
   <svg
     width="80"
     height="80"

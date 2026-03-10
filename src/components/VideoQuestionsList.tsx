@@ -30,8 +30,6 @@ export default function VideoQuestionsList({
   const activeRef = useRef<HTMLButtonElement>(null);
   const listRef = useRef<HTMLDivElement>(null);
 
-  const listRef = useRef<HTMLDivElement>(null);
-
   // Scroll the active question into view within the list container only
   useEffect(() => {
     const container = listRef.current;
@@ -47,7 +45,10 @@ export default function VideoQuestionsList({
     if (relTop < 0) {
       container.scrollTo({ top: container.scrollTop + relTop, behavior: "smooth" });
     } else if (relBottom > container.clientHeight) {
-      container.scrollTo({ top: container.scrollTop + (relBottom - container.clientHeight), behavior: "smooth" });
+      container.scrollTo({
+        top: container.scrollTop + (relBottom - container.clientHeight),
+        behavior: "smooth",
+      });
     }
   }, [activeQuestionId]);
 

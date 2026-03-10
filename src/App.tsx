@@ -16,7 +16,15 @@ import VideoPlayer from "@/components/VideoPlayer";
 import ThemeToggle from "@/components/ThemeToggle";
 import { init, search, isIndexLoaded, isModelLoaded } from "@/lib/searchEngine";
 
-const HEADER_IMAGES = [headerImg1, headerImg2, headerImg3, headerImg4, headerImg5, headerImg6, headerImg7];
+const HEADER_IMAGES = [
+  headerImg1,
+  headerImg2,
+  headerImg3,
+  headerImg4,
+  headerImg5,
+  headerImg6,
+  headerImg7,
+];
 
 const QUESTION_POOL = [
   "What is it like to sleep in space?",
@@ -51,7 +59,9 @@ function App(): React.JSX.Element {
   const [statusMessages, setStatusMessages] = useState<InitProgress[]>([]);
   const [hasSearched, setHasSearched] = useState(false);
   const [suggestedQuery, setSuggestedQuery] = useState<string | undefined>(undefined);
-  const [currentImageIndex, setCurrentImageIndex] = useState(() => Math.floor(Math.random() * HEADER_IMAGES.length));
+  const [currentImageIndex, setCurrentImageIndex] = useState(() =>
+    Math.floor(Math.random() * HEADER_IMAGES.length)
+  );
 
   const commonQuestions = useMemo(() => {
     const pool = QUESTION_POOL.slice();
@@ -141,12 +151,14 @@ function App(): React.JSX.Element {
 
     // Temporarily remove the hero class to measure compact height
     header.classList.remove("app-header--hero");
-    void header.offsetHeight; // force reflow
+    // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+    header.offsetHeight; // force reflow
     const compactH = header.offsetHeight;
 
     // Restore + lock the hero height so GSAP can tween from it
     header.classList.add("app-header--hero");
-    void header.offsetHeight;
+    // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+    header.offsetHeight; // force reflow
     gsap.set(header, { height: heroH });
 
     gsap.to(header, {
@@ -176,8 +188,10 @@ function App(): React.JSX.Element {
           paddingRight: 44,
           duration: 2,
           ease: "power3.inOut",
-          onComplete: () => { gsap.set(inputEl, { clearProps: "all" }); },
-        },
+          onComplete: () => {
+            gsap.set(inputEl, { clearProps: "all" });
+          },
+        }
       );
     }
 
@@ -196,8 +210,10 @@ function App(): React.JSX.Element {
           duration: 1.5,
           delay: 0.75,
           ease: "power1.inOut",
-          onComplete: () => { gsap.set(compactTitleEl, { clearProps: "all" }); },
-        },
+          onComplete: () => {
+            gsap.set(compactTitleEl, { clearProps: "all" });
+          },
+        }
       );
     }
 
@@ -213,8 +229,10 @@ function App(): React.JSX.Element {
           duration: 1.5,
           delay: 0.75,
           ease: "power1.inOut",
-          onComplete: () => { gsap.set(subtitleEl, { clearProps: "all" }); },
-        },
+          onComplete: () => {
+            gsap.set(subtitleEl, { clearProps: "all" });
+          },
+        }
       );
     }
   }, []);
@@ -232,7 +250,7 @@ function App(): React.JSX.Element {
     gsap.fromTo(
       targets,
       { opacity: 0, y: 20 },
-      { opacity: 1, y: 0, duration: 0.5, ease: "power2.out", delay: 0.55, stagger: 0.07 },
+      { opacity: 1, y: 0, duration: 0.5, ease: "power2.out", delay: 0.55, stagger: 0.07 }
     );
   }, [hasSearched]);
   // -----------------------------------------------------------------------
@@ -298,10 +316,13 @@ function App(): React.JSX.Element {
     }, 50);
   }, []);
 
-  const handleSelect = useCallback((result: SearchResult) => {
-    setSelectedResult(result);
-    scrollToSearchInput();
-  }, [scrollToSearchInput]);
+  const handleSelect = useCallback(
+    (result: SearchResult) => {
+      setSelectedResult(result);
+      scrollToSearchInput();
+    },
+    [scrollToSearchInput]
+  );
 
   const handleSelectFromTimeline = useCallback(
     (questionId: number) => {
@@ -311,7 +332,7 @@ function App(): React.JSX.Element {
         scrollToSearchInput();
       }
     },
-    [results, scrollToSearchInput],
+    [results, scrollToSearchInput]
   );
 
   const handleCloseVideo = useCallback(() => {
@@ -371,7 +392,7 @@ function App(): React.JSX.Element {
       selectedQuestionElRef.current = el;
       recomputeConnector();
     },
-    [recomputeConnector],
+    [recomputeConnector]
   );
 
   const handleResultsScrollContainerChange = useCallback(
@@ -386,7 +407,7 @@ function App(): React.JSX.Element {
       }
       recomputeConnector();
     },
-    [recomputeConnector],
+    [recomputeConnector]
   );
 
   useEffect(() => {
@@ -421,17 +442,14 @@ function App(): React.JSX.Element {
 
   return (
     <div className="app-root">
-      <header
-        ref={headerRef}
-        className={`app-header${hasSearched ? "" : " app-header--hero"}`}
-      >
+      <header ref={headerRef} className={`app-header${hasSearched ? "" : " app-header--hero"}`}>
         {HEADER_IMAGES.map((img, index) => (
           <div
             key={img}
             className="app-header-bg"
             style={{
               backgroundImage: `url(${img})`,
-              opacity: index === currentImageIndex ? 0.70 : 0,
+              opacity: index === currentImageIndex ? 0.7 : 0,
             }}
           />
         ))}
@@ -442,7 +460,9 @@ function App(): React.JSX.Element {
             <div className="app-header-text-content">
               <div className="app-title-wrap">
                 <h1 className="app-title app-title--hero">Ask an Astronaut Anything</h1>
-                <h1 className="app-title app-title--compact" aria-hidden="true">Ask an Astronaut Anything</h1>
+                <h1 className="app-title app-title--compact" aria-hidden="true">
+                  Ask an Astronaut Anything
+                </h1>
               </div>
               <p className="app-subtitle">
                 Search across astronaut Q&amp;A recordings onboard the International Space Station
@@ -464,7 +484,11 @@ function App(): React.JSX.Element {
               onFirstInput={handleFirstInput}
               disabled={!engineReady}
               placeholder="Ask your question..."
-              statusText={!engineReady ? (statusMessages[statusMessages.length - 1]?.message ?? "Initialising…") : undefined}
+              statusText={
+                !engineReady
+                  ? (statusMessages[statusMessages.length - 1]?.message ?? "Initialising…")
+                  : undefined
+              }
               externalValue={suggestedQuery}
             />
 
@@ -526,7 +550,11 @@ function App(): React.JSX.Element {
                 <div className="player-placeholder">
                   <div className="placeholder-content">
                     <div className="astronaut-svg-container">
-                      <img src={astronautSvg} alt="Astronaut illustration" className="astronaut-svg" />
+                      <img
+                        src={astronautSvg}
+                        alt="Astronaut illustration"
+                        className="astronaut-svg"
+                      />
                     </div>
                     <p>Select a question to watch the response</p>
                   </div>

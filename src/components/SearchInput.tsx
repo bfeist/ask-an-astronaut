@@ -1,4 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faXmark } from "@fortawesome/free-solid-svg-icons";
 
 interface Props {
   onSearch: (query: string) => void;
@@ -33,7 +35,7 @@ export default function SearchInput({
       onFirstInput?.();
     }
     onSearch(externalValue);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [externalValue]);
 
   const debouncedSearch = useCallback(
@@ -93,7 +95,9 @@ export default function SearchInput({
         onBlur={handleBlur}
       />
       {statusText && !value && (
-        <span className="search-input-status" aria-hidden="true">{statusText}</span>
+        <span className="search-input-status" aria-hidden="true">
+          {statusText}
+        </span>
       )}
       {value && (
         <button
@@ -102,7 +106,7 @@ export default function SearchInput({
           aria-label="Clear search"
           type="button"
         >
-          ×
+          <FontAwesomeIcon icon={faXmark} />
         </button>
       )}
     </div>

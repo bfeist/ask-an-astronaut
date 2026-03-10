@@ -98,6 +98,7 @@ def build_records(identifier: str, metadata: dict) -> list[dict]:
             "title": media.get("title", ""),
             "description": media.get("description", ""),
             "subject": media.get("subject", ""),
+            "date": media.get("date", ""),
             "date_IA_scanned": datetime.now(timezone.utc).isoformat(),
             "IA_file_metadata": {
                 "format": f.get("format"),

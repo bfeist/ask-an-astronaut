@@ -40,11 +40,13 @@ module.exports = {
       files: ["**/*.css", "!**/*.module.css"],
       rules: {
         "selector-class-pattern": [
-          "^([a-z][a-z0-9]*)(-[a-z0-9]+)*$",
+          "^([a-z][a-z0-9]*)(-[a-z0-9]+)*(__([a-z][a-z0-9]*)(-[a-z0-9]+)*)?(--([a-z][a-z0-9]*)(-[a-z0-9]+)*)?$",
           {
-            message: "Selector should be in kebab-case (e.g. .my-class)",
+            message:
+              "Selector should be in kebab-case or BEM (e.g. .my-class, .block__elem, .block--modifier)",
           },
         ],
+        "no-descending-specificity": null,
       },
     },
     {

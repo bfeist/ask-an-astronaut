@@ -14,6 +14,7 @@ function clamp01(v: number): number {
   return Math.min(1, Math.max(0, v));
 }
 
+/* eslint-disable no-bitwise */
 // Small, deterministic hash (FNV-1a 32-bit).
 function fnv1a32(input: string): number {
   let hash = 0x811c9dc5;
@@ -29,6 +30,7 @@ function hashToUnitFloat(hash: number): number {
   // Map uint32 -> [0,1)
   return (hash >>> 0) / 2 ** 32;
 }
+/* eslint-enable no-bitwise */
 
 function yearFraction(dateMs: number, startMs: number, endMs: number): number {
   if (endMs <= startMs) return 0;

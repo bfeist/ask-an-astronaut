@@ -49,6 +49,7 @@ def run_query(
     pages = max(1, math.ceil(total / IA_ROWS_PER_REQUEST))
     if max_pages is not None:
         pages = min(pages, max_pages)
+    print(f"  Found {total} total item(s), {pages} page(s) to scan")
 
     new_identifiers = 0
     written_records = 0
@@ -57,6 +58,7 @@ def run_query(
         if page == 1:
             page_ids = ids
         else:
+            print(f"  Fetching page {page}/{pages} ...")
             page_ids, _ = search_identifiers(query, page=page)
 
         already_seen_on_page = 0
@@ -68,8 +70,10 @@ def run_query(
                 already_seen_on_page += 1
                 continue
 
+            print(f"  [{new_identifiers + 1}] {identifier} ...", end=" ", flush=True)
             metadata = fetch_item_metadata(identifier)
             if not metadata:
+                print("no metadata, skipping")
                 append_seen(identifier)
                 seen.add(identifier)
                 continue
@@ -79,6 +83,7 @@ def run_query(
                 append_jsonl(IA_METADATA_JSONL, rec)
                 written_records += 1
 
+            print(f"{len(records)} record(s) written")
             append_seen(identifier)
             seen.add(identifier)
             new_identifiers += 1
@@ -100,10 +105,21 @@ def main() -> None:
         default=0,
         help="Max new identifiers per query for short tests (0 = all)",
     )
+    parser.add_argument(
+        "--force",
+        action="store_true",
+        help="Ignore seen-identifiers cache and reprocess all items",
+    )
     args = parser.parse_args()
 
     ensure_directories()
     seen = load_seen_identifiers()
+    if args.force:
+        seen = set()
+        if IA_METADATA_JSONL.exists():
+            IA_METADATA_JSONL.unlink()
+        if IA_PROGRESS_FILE.exists():
+            IA_PROGRESS_FILE.unlink()
 
     queries = [f'uploader:"{u}"' for u in IA_UPLOADERS]
     if args.max_queries > 0:
@@ -115,7 +131,7 @@ def main() -> None:
     print(f"Seen identifiers: {len(seen)}")
 
     # Automatically rescan identifiers that were updated on IA since the last run.
-    if seen and IA_PROGRESS_FILE.exists():
+    if not args.force and seen and IA_PROGRESS_FILE.exists():
         last_run_ts = IA_PROGRESS_FILE.stat().st_mtime
         since_date = datetime.fromtimestamp(last_run_ts, tz=timezone.utc).strftime("%Y-%m-%d")
         print(f"\nLooking for items updated since last run ({since_date}) ...")

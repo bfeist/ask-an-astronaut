@@ -1,4 +1,6 @@
 import { useCallback, useMemo, useRef, useState } from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faXmark } from "@fortawesome/free-solid-svg-icons";
 import VideoQuestionsList from "@/components/VideoQuestionsList";
 import { getQuestionsForVideo } from "@/lib/searchEngine";
 
@@ -102,8 +104,8 @@ function VideoPlayerInner({
     <div className="video-player">
       <div className="video-header">
         <div className="video-question-text">{q.text}</div>
-        <button className="video-close" onClick={onClose} type="button">
-          ×
+        <button className="video-close" onClick={onClose} type="button" aria-label="Close">
+          <FontAwesomeIcon icon={faXmark} />
         </button>
       </div>
 
@@ -204,7 +206,11 @@ function VideoPlayerInner({
  * Outer wrapper: uses `key` on the video URL to force remount only when the
  * video file changes. Intra-video question navigation is handled internally.
  */
-export default function VideoPlayer({ result, onClose, panelRef }: Props): React.JSX.Element | null {
+export default function VideoPlayer({
+  result,
+  onClose,
+  panelRef,
+}: Props): React.JSX.Element | null {
   if (!result) return null;
   return (
     <div className="video-panel" ref={panelRef}>
