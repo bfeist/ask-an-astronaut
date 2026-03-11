@@ -80,7 +80,7 @@
 }
 
 .commonQuestionPill:hover {
-  background: rgb(39 39 39);
+  background: var(--pill-hover-bg);
   border-color: rgb(0 132 255);
   outline: 2px solid rgb(0 132 255);
   outline-offset: -1px;
