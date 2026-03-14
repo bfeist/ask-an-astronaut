@@ -37,7 +37,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "scripts"))
 
-from astro_ia_harvest.config import CLASSIFIED_JSONL, QA_DIR  # noqa: E402
+from astro_ia_harvest.config import CLASSIFIED_JSONL, QA_DIR, VIDEO_DATES_FILE  # noqa: E402
 from astro_ia_harvest.download_utils import canonical_video_key  # noqa: E402
 from astro_ia_harvest.ia_api import fetch_item_metadata  # noqa: E402
 
@@ -87,7 +87,7 @@ def extract_date_from_name(name: str) -> str:
 
     return ""
 
-OUTPUT_FILE = ROOT / "data" / "video_dates.json"
+OUTPUT_FILE = VIDEO_DATES_FILE
 
 VIDEO_EXTENSIONS = (".mp4", ".mxf", ".mov", ".m4v", ".avi", ".mpg", ".mpeg", ".webm")
 

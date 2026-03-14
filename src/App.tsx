@@ -18,6 +18,7 @@ import ThemeToggle from "@/components/ThemeToggle";
 import VideoPlayer from "@/components/VideoPlayer";
 import { init, search, isIndexLoaded, isModelLoaded, getAllQuestions } from "@/lib/searchEngine";
 import { useVideoDates } from "@/lib/useVideoDates";
+import { useSiteStats } from "@/lib/useSiteStats";
 import { computeConnectorPath, type ConnectorGeometry } from "@/utils/connector";
 import { pickRandom } from "@/utils/pickRandom";
 import styles from "./App.module.css";
@@ -67,6 +68,7 @@ function App(): React.JSX.Element {
   const [allIndexQuestions, setAllIndexQuestions] = useState<IndexQuestion[]>([]);
   const [suggestedQuery, setSuggestedQuery] = useState<string | undefined>(undefined);
   const videoDates = useVideoDates();
+  const siteStats = useSiteStats();
   const [currentImageIndex, setCurrentImageIndex] = useState(() =>
     Math.floor(Math.random() * HEADER_IMAGES.length)
   );
@@ -596,6 +598,14 @@ function App(): React.JSX.Element {
 
             {!hasSearched && engineReady && (
               <CommonQuestions questions={commonQuestions} onSelect={setSuggestedQuery} />
+            )}
+
+            {!hasSearched && siteStats && (
+              <p className={styles.statsBar}>
+                {siteStats.num_questions.toLocaleString()} questions ·{" "}
+                {Math.round(siteStats.total_duration_seconds / 3600).toLocaleString()} hours of Q&A
+                footage
+              </p>
             )}
 
             {hasSearched && (

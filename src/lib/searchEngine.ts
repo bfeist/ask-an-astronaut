@@ -44,7 +44,7 @@ export async function loadIndex(onProgress?: (p: InitProgress) => void): Promise
   if (_initPromise) return _initPromise;
 
   _initPromise = (async () => {
-    onProgress?.({ stage: "index", message: "Loading search index…" });
+    onProgress?.({ stage: "index", message: "Loading search index" });
 
     // Fetch metadata and questions in parallel
     const [metaRes, questionsRes] = await Promise.all([
@@ -57,7 +57,7 @@ export async function loadIndex(onProgress?: (p: InitProgress) => void): Promise
 
     onProgress?.({
       stage: "index",
-      message: `Loaded ${_meta.num_questions} questions. Fetching embeddings…`,
+      message: "Loading search embeddings",
     });
 
     // Fetch binary embeddings
@@ -88,7 +88,7 @@ export async function loadIndex(onProgress?: (p: InitProgress) => void): Promise
 
     onProgress?.({
       stage: "index",
-      message: `Search index ready (${numQuestions} questions, ${dim}d)`,
+      message: "Loaded",
       done: true,
     });
   })();
@@ -107,7 +107,7 @@ export async function loadModel(onProgress?: (p: InitProgress) => void): Promise
   _modelPromise = (async () => {
     onProgress?.({
       stage: "model",
-      message: "Loading semantic search model (all-MiniLM-L6-v2)…",
+      message: "Loading model",
     });
 
     // @xenova/transformers v2 avoids the JSEP/ASYNCIFY WASM memory-balloon bug
@@ -128,7 +128,7 @@ export async function loadModel(onProgress?: (p: InitProgress) => void): Promise
 
     onProgress?.({
       stage: "model",
-      message: "Model ready",
+      message: "Loaded",
       done: true,
     });
   })();

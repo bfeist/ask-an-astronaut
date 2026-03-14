@@ -5,6 +5,7 @@ __pycache__/
 uv.lock
 
 data/
+static_assets/
 
 # Node / Vite
 node_modules/

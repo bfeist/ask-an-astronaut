@@ -43,6 +43,7 @@ sys.path.insert(0, str(ROOT / "scripts"))
 from astro_ia_harvest.config import (  # noqa: E402
     QA_TEXT_DIR,
     SEARCH_INDEX_DIR,
+    SITE_STATS_FILE,
     ensure_directories,
 )
 
@@ -57,6 +58,7 @@ BATCH_SIZE = 64  # sentences per GPU/CPU batch
 INDEX_META_FILE = "index_meta.json"
 QUESTIONS_FILE = "questions.json"
 EMBEDDINGS_FILE = "embeddings.bin"
+STATS_FILE = "site_stats.json"
 
 
 # ---------------------------------------------------------------------------
@@ -76,8 +78,12 @@ def load_qa_text(path: Path) -> dict | None:
     return data
 
 
-def extract_questions(qa_text: dict, source_filename: str) -> list[dict]:
+def extract_questions(qa_text: dict, source_filename: str) -> tuple[list[dict], float]:
     """Pull indexable question records from a qa_text document.
+
+    Returns (questions, video_duration_seconds) where video_duration_seconds is
+    the maximum answer end-time seen across all Q&A pairs — a lower-bound proxy
+    for the actual video length. Used in site stats.
 
     Each record carries enough metadata to reference back to the original
     video at the correct timestamp — but intentionally omits answer text
@@ -87,6 +93,7 @@ def extract_questions(qa_text: dict, source_filename: str) -> list[dict]:
     upstream in Stage 5b.
     """
     questions: list[dict] = []
+    max_end: float = 0.0
 
     for pair in qa_text.get("qa_pairs", []):
         q = pair.get("question", {})
@@ -100,6 +107,12 @@ def extract_questions(qa_text: dict, source_filename: str) -> list[dict]:
             {"start": ans["start"], "end": ans["end"]}
             for ans in pair.get("answers", [])
         ]
+
+        # Track max end time for duration estimation
+        for ans in pair.get("answers", []):
+            end = ans.get("end", 0) or 0
+            if end > max_end:
+                max_end = end
 
         # Concatenate all answer texts into a single string for display
         answer_texts = [
@@ -120,7 +133,7 @@ def extract_questions(qa_text: dict, source_filename: str) -> list[dict]:
             "answer_text": answer_text,
         })
 
-    return questions
+    return questions, max_end
 
 
 def load_model():
@@ -184,6 +197,25 @@ def save_questions_json(questions: list[dict], path: Path) -> None:
     print(f"  Saved questions:  {path}  ({len(questions)} entries)")
 
 
+def save_site_stats(
+    num_questions: int,
+    num_videos: int,
+    total_duration_seconds: float,
+    path: Path,
+) -> None:
+    """Write site-wide stats as JSON for the frontend to display."""
+    stats = {
+        "num_questions": num_questions,
+        "num_videos": num_videos,
+        "total_duration_seconds": round(total_duration_seconds),
+        "built_at": datetime.now(timezone.utc).isoformat(),
+    }
+    path.write_text(json.dumps(stats, indent=2), encoding="utf-8")
+    total_h = total_duration_seconds / 3600
+    print(f"  Saved site stats: {path}")
+    print(f"    {num_questions} questions  |  {num_videos} videos  |  {total_h:.1f}h total duration")
+
+
 def save_index_meta(num_questions: int, path: Path) -> None:
     """Write the index metadata file."""
     meta = {
@@ -225,6 +257,7 @@ def build_index(qa_text_files: list[Path], *, force: bool = False) -> None:
     all_questions: list[dict] = []
     files_processed = 0
     files_skipped = 0
+    duration_by_file: dict[str, float] = {}  # source filename -> max end time
 
     for i, path in enumerate(qa_text_files, 1):
         print(f"\n[{i}/{len(qa_text_files)}] {path.name}")
@@ -233,9 +266,10 @@ def build_index(qa_text_files: list[Path], *, force: bool = False) -> None:
             files_skipped += 1
             continue
 
-        questions = extract_questions(qa_text, source_filename=path.name)
-        print(f"  Extracted {len(questions)} indexable questions")
+        questions, video_duration = extract_questions(qa_text, source_filename=path.name)
+        print(f"  Extracted {len(questions)} indexable questions  ({video_duration:.0f}s covered)")
         all_questions.extend(questions)
+        duration_by_file[path.name] = video_duration
         files_processed += 1
 
     if not all_questions:
@@ -296,10 +330,14 @@ def build_index(qa_text_files: list[Path], *, force: bool = False) -> None:
     # ------------------------------------------------------------------
     # 3. Save outputs
     # ------------------------------------------------------------------
+    num_videos = len({q["source_file"] for q in all_questions})
+    total_duration = sum(duration_by_file.values())
+
     print(f"\n  Writing index to: {SEARCH_INDEX_DIR}")
     save_questions_json(all_questions, questions_path)
     save_embeddings_bin(embeddings, embeddings_path)
     save_index_meta(len(all_questions), meta_path)
+    save_site_stats(len(all_questions), num_videos, total_duration, SITE_STATS_FILE)
 
 
 # ---------------------------------------------------------------------------

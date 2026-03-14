@@ -60,6 +60,14 @@ interface VideoDateEntry {
 /** Map from .qa.json filename to date metadata. */
 type VideoDates = Record<string, VideoDateEntry>;
 
+/** Site-wide stats loaded from site_stats.json. */
+interface SiteStats {
+  num_questions: number;
+  num_videos: number;
+  total_duration_seconds: number;
+  built_at: string;
+}
+
 /**
  * Thin callable type for the transformers.js feature-extraction pipeline.
  * Avoids the overly-complex union that pipeline()'s overloaded return type

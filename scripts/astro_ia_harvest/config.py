@@ -10,6 +10,7 @@ PROJECT_ROOT = Path(__file__).resolve().parents[2]
 # Load .env from project root (silently ignored if it doesn't exist)
 load_dotenv(PROJECT_ROOT / ".env")
 DATA_DIR = PROJECT_ROOT / "data"
+STATIC_ASSETS_DATA_DIR = PROJECT_ROOT / "static_assets" / "data"
 DOCS_DIR = PROJECT_ROOT / "docs"
 DOWNLOAD_DIR = Path(r"D:\ask_anything_ia_videos_raw")
 
@@ -31,8 +32,10 @@ QA_DIR = DATA_DIR / "qa"
 QA_TEXT_DIR = DATA_DIR / "qa_text"
 QA_EMPTY_JSONL = DATA_DIR / "qa_empty.jsonl"  # transcripts that produced no Q&A pairs
 
-# Stage 6 outputs
-SEARCH_INDEX_DIR = DATA_DIR / "search_index"
+# Stage 6 outputs — written to static_assets/data/ for direct hosting upload
+SEARCH_INDEX_DIR = STATIC_ASSETS_DATA_DIR / "search_index"
+VIDEO_DATES_FILE = STATIC_ASSETS_DATA_DIR / "video_dates.json"
+SITE_STATS_FILE = STATIC_ASSETS_DATA_DIR / "site_stats.json"
 
 # Existing cache from the other project. Files found here will be treated as already downloaded.
 EXISTING_DOWNLOAD_DIR = Path(r"D:\ISSiRT_ia_videos_raw")
@@ -55,6 +58,7 @@ DEFAULT_OLLAMA_MODEL = "gemma3:12b"
 
 def ensure_directories() -> None:
     DATA_DIR.mkdir(parents=True, exist_ok=True)
+    STATIC_ASSETS_DATA_DIR.mkdir(parents=True, exist_ok=True)
     DOCS_DIR.mkdir(parents=True, exist_ok=True)
     DOWNLOAD_DIR.mkdir(parents=True, exist_ok=True)
     TRANSCRIPTS_DIR.mkdir(parents=True, exist_ok=True)

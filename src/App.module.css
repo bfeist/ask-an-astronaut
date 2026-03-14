@@ -167,8 +167,6 @@
   display: none;
 }
 
-
-
 /* Hero large version */
 .appTitleHero {
   position: relative;
@@ -261,6 +259,8 @@
       "player"
       "results";
     column-gap: 0;
+    margin-top: 0;
+    row-gap: 16px;
   }
 
   .playerPanel {
@@ -287,11 +287,6 @@
     padding: 0 16px 12px;
   }
 
-  .appMain {
-    margin-top: 0;
-    row-gap: 16px;
-  }
-
   .appTitleCompact {
     white-space: normal;
     font-size: 22px;
@@ -310,6 +305,16 @@
   gap: 8px;
   position: relative;
   z-index: 10;
+}
+
+.statsBar {
+  margin: 0;
+  font-size: 13px;
+  opacity: 0.55;
+  letter-spacing: 0.02em;
+  text-align: center;
+  pointer-events: none;
+  user-select: none;
 }
 
 .resultsPanel {

@@ -8,10 +8,10 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 // ---------------------------------------------------------------------------
 // Local-dev plugin: serve video files from the external download directory
-// and search-index data files from data/search_index/.
+// and static_assets/data files (search index, video dates, site stats).
 // ---------------------------------------------------------------------------
 const VIDEO_DIR = "D:/ask_anything_ia_videos_raw";
-const DATA_DIR = path.resolve(__dirname, "data");
+const DATA_DIR = path.resolve(__dirname, "static_assets", "data");
 
 function localMediaPlugin(): Plugin {
   return {

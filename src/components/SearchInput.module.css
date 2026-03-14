@@ -61,6 +61,9 @@
   color: rgb(255 255 255 / 85%);
   pointer-events: none;
   white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  padding: 0 60px;
   text-align: center;
   text-shadow: 0 0 12px rgb(255 255 255 / 30%);
 }
