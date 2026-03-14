@@ -198,7 +198,7 @@
   display: none;
 }
 
-@media (max-width: 600px) {
+@media (width <= 600px) {
   .seekFull {
     display: none;
   }

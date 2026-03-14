@@ -94,7 +94,7 @@
 }
 
 .resultItemSelected .scoreBarWrap {
-  color: #fff;
+  color: #ffffff;
 }
 
 .resultItemSelected .scoreBar {
@@ -102,7 +102,7 @@
 }
 
 .resultItemSelected .scoreBarFill {
-  background: #fff;
+  background: #ffffff;
 }
 
 .resultRank {
@@ -151,7 +151,7 @@
 
 .scoreBarFill {
   height: 100%;
-  background: #999;
+  background: #999999;
   border-radius: 3px;
   transition: width 0.3s ease;
 }
