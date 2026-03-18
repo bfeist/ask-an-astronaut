@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 
 const PROD_DATA = import.meta.env.VITE_PROD_DATA === "true";
-const STATIC_ORIGIN = PROD_DATA ? "https://askanything.benfeist.com" : "";
+const STATIC_ORIGIN = PROD_DATA ? "https://askanastronaut.issinrealtime.org" : "";
 
 const VIDEO_DATES_URL = `${STATIC_ORIGIN}/static_assets/data/video_dates.json`;
 
