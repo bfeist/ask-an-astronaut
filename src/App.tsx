@@ -560,10 +560,10 @@ function App(): React.JSX.Element {
             <div className={styles.appHeaderTextContent}>
               <div className={styles.appTitleWrap}>
                 <h1 className={`${styles.appTitle} ${styles.appTitleHero}`}>
-                  Ask an Astronaut Anything
+                  Ask an Astronaut
                 </h1>
                 <h1 className={`${styles.appTitle} ${styles.appTitleCompact}`} aria-hidden="true">
-                  Ask an Astronaut Anything
+                  Ask an Astronaut
                 </h1>
               </div>
               <p className={styles.appSubtitle}>

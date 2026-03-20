@@ -213,6 +213,7 @@
 .appHeaderHero .appSubtitle {
   font-size: 15px;
   opacity: 0.75;
+  margin-top: 0px;
 }
 
 /* --------------------------------------------------------------------------
@@ -248,6 +249,12 @@
   grid-template-rows: auto;
   grid-template-areas: "search search";
   flex: none;
+}
+
+@media (width <= 1464px) {
+  .appHeaderHero .appTitleIconHero {
+    display: none;
+  }
 }
 
 @media (width <= 900px) {

@@ -5,7 +5,7 @@
 .themeToggle {
   position: relative;
   z-index: 20;
-  display: flex;
+  display: none; /* TODO: unhide when theme toggle is needed */
   align-items: center;
   gap: 6px;
   background: none;
