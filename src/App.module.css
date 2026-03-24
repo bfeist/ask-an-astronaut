@@ -124,6 +124,55 @@
   min-width: 0;
 }
 
+.appPrologue {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: Exo, sans-serif;
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: rgb(255 214 0);
+  white-space: nowrap;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.appPrologue:hover {
+  color: rgb(255 228 80);
+}
+
+.appPrologue:hover .appPrologueSuffix {
+  opacity: 1;
+}
+
+.appPrologueLogo {
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
+}
+
+.appPrologueSuffix {
+  color: var(--fg);
+  opacity: 0.75;
+  font-weight: 400;
+}
+
+.appHeaderHero .appPrologue {
+  font-size: clamp(14px, 1.8vw, 20px);
+}
+
+.appHeaderHero .appPrologueLogo {
+  width: clamp(20px, 2.5vw, 30px);
+  height: clamp(20px, 2.5vw, 30px);
+}
+
+/* Hide prologue in compact state — zero height so it takes no space */
+.appHeader:not(.appHeaderHero) .appPrologue {
+  display: none;
+}
+
 .appTitleWrap {
   position: relative;
 }

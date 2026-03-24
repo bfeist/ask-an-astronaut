@@ -8,6 +8,7 @@ import headerImg5 from "@/images/astronaut_with_fruit.jpg";
 import headerImg6 from "@/images/iss061e006682.webp";
 import headerImg7 from "@/images/wilmore-hague-williams.webp";
 import astronaut2Svg from "@/images/astronaut2.svg";
+import issLogo from "@/images/ISS_logo.png";
 import CommonQuestions from "@/components/CommonQuestions";
 import ConnectorSvg from "@/components/ConnectorSvg";
 import PlayerPlaceholder from "@/components/PlayerPlaceholder";
@@ -201,6 +202,18 @@ function App(): React.JSX.Element {
       );
     }
 
+    // Fade out the prologue title during the hero→compact transition.
+    const prologueEl = header.querySelector(`.${styles.appPrologue}`) as HTMLElement | null;
+    if (prologueEl) {
+      gsap.to(prologueEl, {
+        opacity: 0,
+        height: 0,
+        marginBottom: 0,
+        duration: 0.8,
+        ease: "power2.inOut",
+      });
+    }
+
     // Hide the large hero title immediately, then fade the compact one in.
     if (heroTitleEl && compactTitleEl) {
       gsap.set(heroTitleEl, { opacity: 0 });
@@ -258,9 +271,13 @@ function App(): React.JSX.Element {
     const headerTextEl = header.querySelector(`.${styles.appHeaderText}`) as HTMLElement | null;
     const inputEl = mainRef.current?.querySelector("[data-search-input]") as HTMLElement | null;
 
-    [header, heroTitleEl, compactTitleEl, subtitleEl, headerTextEl, inputEl].forEach((el) => {
-      if (el) gsap.killTweensOf(el);
-    });
+    const prologueEl = header.querySelector(`.${styles.appPrologue}`) as HTMLElement | null;
+
+    [header, heroTitleEl, compactTitleEl, subtitleEl, headerTextEl, inputEl, prologueEl].forEach(
+      (el) => {
+        if (el) gsap.killTweensOf(el);
+      }
+    );
 
     // Hide synchronously BEFORE clearing individual inline styles.
     // React's setHasSearched(false) batches and re-renders after this handler
@@ -272,6 +289,7 @@ function App(): React.JSX.Element {
     if (heroTitleEl) gsap.set(heroTitleEl, { clearProps: "all" });
     if (compactTitleEl) gsap.set(compactTitleEl, { clearProps: "all" });
     if (subtitleEl) gsap.set(subtitleEl, { clearProps: "all" });
+    if (prologueEl) gsap.set(prologueEl, { clearProps: "all" });
 
     const compactH = header.offsetHeight;
 
@@ -558,6 +576,17 @@ function App(): React.JSX.Element {
               className={`${styles.appTitleIcon} ${styles.appTitleIconCompact}`}
             />
             <div className={styles.appHeaderTextContent}>
+              <a
+                href="https://issinrealtime.org"
+                target="_blank"
+                rel="noopener noreferrer"
+                className={styles.appPrologue}
+              >
+                <img src={issLogo} alt="" className={styles.appPrologueLogo} />
+                <span>
+                  ISS in Real Time <span className={styles.appPrologueSuffix}>Presents</span>
+                </span>
+              </a>
               <div className={styles.appTitleWrap}>
                 <h1 className={`${styles.appTitle} ${styles.appTitleHero}`}>Ask an Astronaut</h1>
                 <h1 className={`${styles.appTitle} ${styles.appTitleCompact}`} aria-hidden="true">
