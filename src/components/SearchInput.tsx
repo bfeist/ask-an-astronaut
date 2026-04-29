@@ -34,7 +34,7 @@ export default function SearchInput({
   // Sync when a suggestion is chosen externally
   useEffect(() => {
     if (externalValue === undefined) return;
-    setValue(externalValue);
+    setValue(externalValue); // eslint-disable-line react-hooks/set-state-in-effect
     if (externalValue && !firstInputFiredRef.current) {
       firstInputFiredRef.current = true;
       onFirstInput?.();

@@ -421,7 +421,7 @@ function App(): React.JSX.Element {
   // Re-run the pending query once the engine is ready
   useEffect(() => {
     if (indexReady && modelReady && query.trim()) {
-      handleSearch(query);
+      handleSearch(query); // eslint-disable-line react-hooks/set-state-in-effect
     }
   }, [indexReady, modelReady]); // eslint-disable-line react-hooks/exhaustive-deps
 
