@@ -1,5 +1,6 @@
 import { fixupConfigRules, fixupPluginRules } from "@eslint/compat";
-import react from "eslint-plugin-react";
+import reactPlugin from "eslint-plugin-react";
+const react = fixupPluginRules(reactPlugin);
 import reactHooksPkg from "eslint-plugin-react-hooks";
 import typescriptEslint from "@typescript-eslint/eslint-plugin";
 import jsxa11y from "eslint-plugin-jsx-a11y";
