@@ -12,6 +12,8 @@ interface Props {
   statusText?: string;
   externalValue?: string;
   hero?: boolean;
+  clearTrigger?: number;
+  initialValue?: string;
 }
 
 /**
@@ -26,10 +28,21 @@ export default function SearchInput({
   statusText,
   externalValue,
   hero = false,
+  clearTrigger,
+  initialValue = "",
 }: Props): React.JSX.Element {
-  const [value, setValue] = useState("");
+  const [value, setValue] = useState(initialValue);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const firstInputFiredRef = useRef(false);
+  const firstInputFiredRef = useRef(initialValue !== "");
+
+  // Clear input when parent requests a reset
+  useEffect(() => {
+    if (!clearTrigger) return;
+    setValue(""); // eslint-disable-line react-hooks/set-state-in-effect
+    firstInputFiredRef.current = false;
+    onSearch("");
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [clearTrigger]);
 
   // Sync when a suggestion is chosen externally
   useEffect(() => {

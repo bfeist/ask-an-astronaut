@@ -184,6 +184,7 @@
   letter-spacing: 2px;
   text-transform: uppercase;
   color: #ffffff;
+  cursor: pointer;
 }
 
 .appTitleIcon {

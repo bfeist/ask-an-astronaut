@@ -89,6 +89,7 @@ function App(): React.JSX.Element {
   const [hasSearched, setHasSearched] = useState(_initialUrlQuery !== "");
   const [allIndexQuestions, setAllIndexQuestions] = useState<IndexQuestion[]>([]);
   const [suggestedQuery, setSuggestedQuery] = useState<string | undefined>(undefined);
+  const [clearTrigger, setClearTrigger] = useState(0);
   const videoDates = useVideoDates();
   const siteStats = useSiteStats();
   const [currentImageIndex, setCurrentImageIndex] = useState(() =>
@@ -529,6 +530,7 @@ function App(): React.JSX.Element {
     setSelectedResult(null);
     setQuery("");
     setSuggestedQuery(undefined);
+    setClearTrigger((n) => n + 1);
   }, [animateCompactToHero]);
 
   const engineReady = indexReady && modelReady;
@@ -645,7 +647,20 @@ function App(): React.JSX.Element {
                   ISS in Real Time <span className={styles.appPrologueSuffix}>Presents</span>
                 </span>
               </a>
-              <div className={styles.appTitleWrap}>
+              <div
+                className={styles.appTitleWrap}
+                onClick={hasSearched ? handleClearInput : undefined}
+                onKeyDown={
+                  hasSearched
+                    ? (e) => {
+                        if (e.key === "Enter" || e.key === " ") handleClearInput();
+                      }
+                    : undefined
+                }
+                role={hasSearched ? "button" : undefined}
+                tabIndex={hasSearched ? 0 : undefined}
+                style={{ cursor: hasSearched ? "pointer" : undefined }}
+              >
                 <h1 className={`${styles.appTitle} ${styles.appTitleHero}`}>Ask an Astronaut</h1>
                 <h1 className={`${styles.appTitle} ${styles.appTitleCompact}`} aria-hidden="true">
                   Ask an Astronaut
@@ -679,6 +694,8 @@ function App(): React.JSX.Element {
                   : undefined
               }
               externalValue={suggestedQuery}
+              clearTrigger={clearTrigger}
+              initialValue={_initialUrlQuery}
             />
 
             {!hasSearched && engineReady && (
