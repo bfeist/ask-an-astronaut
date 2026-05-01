@@ -36,6 +36,8 @@ function VideoPlayerInner({
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
+  // True when the browser blocked autoplay — show a big centered play button.
+  const [waitingForUserPlay, setWaitingForUserPlay] = useState(false);
   const [controlsVisible, setControlsVisible] = useState(false);
   const [activeQuestionId, setActiveQuestionId] = useState(result.question.id);
 
@@ -57,7 +59,11 @@ function VideoPlayerInner({
     if (seekTarget > 0) {
       video.currentTime = seekTarget;
     }
-    video.play().catch(() => {});
+    video.play().catch(() => {
+      // Browser blocked autoplay (common on deep-link page loads without prior
+      // user gesture). Surface a big play button instead of silently staying paused.
+      setWaitingForUserPlay(true);
+    });
   }, [seekTarget]);
 
   const handlePlayPause = useCallback(() => {
@@ -110,7 +116,10 @@ function VideoPlayerInner({
     }
   }, []);
 
-  const handlePlay = useCallback(() => setIsPaused(false), []);
+  const handlePlay = useCallback(() => {
+    setIsPaused(false);
+    setWaitingForUserPlay(false);
+  }, []);
   const handlePause = useCallback(() => setIsPaused(true), []);
 
   const handleContainerPointerDown = useCallback((e: React.PointerEvent<HTMLDivElement>) => {
@@ -159,6 +168,16 @@ function VideoPlayerInner({
           onPointerDown={handleContainerPointerDown}
         >
           {isLoading && <div className={styles.videoLoading}>Loading video…</div>}
+          {waitingForUserPlay && (
+            <button
+              className={styles.bigPlayOverlay}
+              onClick={() => videoRef.current?.play().catch(() => {})}
+              type="button"
+              aria-label="Play video"
+            >
+              <FontAwesomeIcon icon={faPlay} />
+            </button>
+          )}
           <video
             ref={videoRef}
             className={styles.videoElement}

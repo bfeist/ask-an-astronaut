@@ -17,7 +17,15 @@ import ResultsList from "@/components/ResultsList";
 import SearchInput from "@/components/SearchInput";
 import ThemeToggle from "@/components/ThemeToggle";
 import VideoPlayer from "@/components/VideoPlayer";
-import { init, search, isIndexLoaded, isModelLoaded, getAllQuestions } from "@/lib/searchEngine";
+import {
+  init,
+  search,
+  isIndexLoaded,
+  isModelLoaded,
+  getAllQuestions,
+  getQuestionById,
+  makeSearchResult,
+} from "@/lib/searchEngine";
 import { useVideoDates } from "@/lib/useVideoDates";
 import { useSiteStats } from "@/lib/useSiteStats";
 import { computeConnectorPath, type ConnectorGeometry } from "@/utils/connector";
@@ -58,14 +66,27 @@ const QUESTION_POOL = [
 ];
 
 function App(): React.JSX.Element {
+  // ---------------------------------------------------------------------------
+  // URL state — parse once on mount. useState / useRef only consume these on
+  // the very first render, so re-parsing on subsequent renders is harmless.
+  // ---------------------------------------------------------------------------
+  const _urlParams = new URLSearchParams(window.location.search);
+  const _initialUrlQuery = _urlParams.get("q") ?? "";
+  const _initialUrlId = (() => {
+    const s = _urlParams.get("id");
+    if (s === null) return null;
+    const n = parseInt(s, 10);
+    return Number.isFinite(n) ? n : null;
+  })();
+
   const [results, setResults] = useState<SearchResult[]>([]);
   const [selectedResult, setSelectedResult] = useState<SearchResult | null>(null);
-  const [query, setQuery] = useState("");
+  const [query, setQuery] = useState(_initialUrlQuery);
   const [isSearching, setIsSearching] = useState(false);
   const [indexReady, setIndexReady] = useState(false);
   const [modelReady, setModelReady] = useState(false);
   const [statusMessages, setStatusMessages] = useState<InitProgress[]>([]);
-  const [hasSearched, setHasSearched] = useState(false);
+  const [hasSearched, setHasSearched] = useState(_initialUrlQuery !== "");
   const [allIndexQuestions, setAllIndexQuestions] = useState<IndexQuestion[]>([]);
   const [suggestedQuery, setSuggestedQuery] = useState<string | undefined>(undefined);
   const videoDates = useVideoDates();
@@ -94,7 +115,12 @@ function App(): React.JSX.Element {
 
   // Ref so handleSearch (memoised with no deps) can read hasSearched without
   // needing it in its dependency array.
-  const hasSearchedRef = useRef(false);
+  const hasSearchedRef = useRef(_initialUrlQuery !== "");
+
+  // Pending URL restoration: id of the question to auto-select on the first
+  // search that matches the initial URL query. Consumed (set to null) after use.
+  const urlRestoreIdRef = useRef<number | null>(_initialUrlId);
+  const urlRestoreQueryRef = useRef(_initialUrlQuery);
 
   const headerRef = useRef<HTMLElement>(null);
   const resultsPanelRef = useRef<HTMLDivElement>(null);
@@ -404,7 +430,29 @@ function App(): React.JSX.Element {
     try {
       const hits = await search(newQuery.trim(), { k: 25, minScore: 0.15 });
       if (id === searchIdRef.current) {
-        setResults(hits);
+        // URL restore: auto-select the question from a shared link, but only
+        // on the very first search that was seeded from the URL query param.
+        const pendingId = urlRestoreIdRef.current;
+        if (pendingId !== null && newQuery.trim() === urlRestoreQueryRef.current.trim()) {
+          urlRestoreIdRef.current = null; // consume — never fires again
+          const match = hits.find((r) => r.question.id === pendingId);
+          if (match) {
+            setResults(hits);
+            setSelectedResult(match);
+          } else {
+            // Question fell out of top-25 (data changed) — look it up directly.
+            const question = getQuestionById(pendingId);
+            if (question) {
+              const synthetic = makeSearchResult(question);
+              setResults([synthetic, ...hits]);
+              setSelectedResult(synthetic);
+            } else {
+              setResults(hits);
+            }
+          }
+        } else {
+          setResults(hits);
+        }
       }
     } catch (err) {
       console.error("Search error:", err);
@@ -424,6 +472,16 @@ function App(): React.JSX.Element {
       handleSearch(query); // eslint-disable-line react-hooks/set-state-in-effect
     }
   }, [indexReady, modelReady]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Keep the URL in sync with the current search state so shared links work.
+  // Uses replaceState so the browser history isn't flooded with every keystroke.
+  useEffect(() => {
+    const params = new URLSearchParams();
+    if (query) params.set("q", query);
+    if (selectedResult !== null) params.set("id", String(selectedResult.question.id));
+    const qs = params.toString();
+    window.history.replaceState(null, "", qs ? `?${qs}` : window.location.pathname);
+  }, [query, selectedResult]);
 
   const scrollToSearchInputOnMobile = useCallback(() => {
     if (window.matchMedia("(pointer: coarse)").matches) {

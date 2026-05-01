@@ -139,6 +139,30 @@
   z-index: 1;
 }
 
+.bigPlayOverlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgb(0 0 0 / 35%);
+  border: none;
+  cursor: pointer;
+  z-index: 2;
+  color: #ffffff;
+  font-size: 52px;
+  border-radius: 10px;
+  transition: background 0.15s ease;
+}
+
+.bigPlayOverlay:hover {
+  background: rgb(0 0 0 / 50%);
+}
+
+.bigPlayOverlay svg {
+  filter: drop-shadow(0 2px 8px rgb(0 0 0 / 60%));
+}
+
 .videoError {
   padding: 24px;
   border: 2px solid var(--border-strong);

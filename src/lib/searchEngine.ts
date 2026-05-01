@@ -252,6 +252,25 @@ export function getAllQuestions(): IndexQuestion[] {
 }
 
 /**
+ * Return a single question by its numeric id (array index), or null if not loaded / out of range.
+ */
+export function getQuestionById(id: number): IndexQuestion | null {
+  if (!_questions) return null;
+  return _questions[id] ?? null;
+}
+
+/**
+ * Build a SearchResult from a bare IndexQuestion (used for URL-restore fallback).
+ */
+export function makeSearchResult(question: IndexQuestion): SearchResult {
+  return {
+    question,
+    score: 1.0,
+    videoUrl: videoUrlFromSource(question.source_file),
+  };
+}
+
+/**
  * Return all questions that belong to the same video (same `source_file`),
  * sorted by `question_start` ascending.
  */
