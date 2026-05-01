@@ -115,7 +115,6 @@
 .appHeaderText {
   flex: 1;
   min-width: 0;
-  max-width: 800px;
   position: relative;
 }
 
@@ -148,8 +147,8 @@
 }
 
 .appPrologueLogo {
-  width: 24px;
-  height: 24px;
+  width: 28px;
+  height: 28px;
   flex-shrink: 0;
 }
 
@@ -160,12 +159,12 @@
 }
 
 .appHeaderHero .appPrologue {
-  font-size: clamp(14px, 1.8vw, 20px);
+  font-size: clamp(16px, 1.8vw, 22px);
 }
 
 .appHeaderHero .appPrologueLogo {
-  width: clamp(20px, 2.5vw, 30px);
-  height: clamp(20px, 2.5vw, 30px);
+  width: clamp(22px, 2.5vw, 30px);
+  height: clamp(22px, 2.5vw, 30px);
 }
 
 /* Hide prologue in compact state — zero height so it takes no space */
@@ -261,7 +260,9 @@
 }
 
 .appHeaderHero .appSubtitle {
-  font-size: 15px;
+  font-size: 1.2em;
+  line-height: 1.2em;
+  max-width: 600px;
   opacity: 0.75;
   margin-top: 0;
 }
@@ -340,6 +341,10 @@
     padding: 9px 16px 22px;
   }
 
+  .appHeaderHero .appSubtitle {
+    font-size: 1em;
+  }
+
   .app {
     padding: 0 16px 12px;
   }
@@ -383,10 +388,8 @@
     box-shadow 0.2s ease;
 }
 
-@media (hover: hover) {
-  .resultsPanel:hover {
-    transform: translateY(-4px);
-  }
+.resultsPanel:hover {
+  transform: translateY(-4px);
 }
 
 .playerPanel {
@@ -399,10 +402,8 @@
     box-shadow 0.2s ease;
 }
 
-@media (hover: hover) {
-  .playerPanel:hover {
-    transform: translateY(-4px);
-  }
+.playerPanel:hover {
+  transform: translateY(-4px);
 }
 
 /* --------------------------------------------------------------------------

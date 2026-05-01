@@ -1,4 +1,4 @@
-import astronautSvg from "@/images/astronaut1.svg";
+const astronautSvg = "/images/astronaut1.svg";
 import styles from "./PlayerPlaceholder.module.css";
 
 export default function PlayerPlaceholder(): React.JSX.Element {

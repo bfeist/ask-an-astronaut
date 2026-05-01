@@ -1,14 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { gsap } from "gsap";
-import headerImg1 from "@/images/Fb39yuyEuLtH2W5k9BT7LA.jpg";
-import headerImg2 from "@/images/alexanderGerstWaving.webp";
-import headerImg3 from "@/images/egr-xqtw4aez5m2-1.jpg";
-import headerImg4 from "@/images/STARLINER-NASA-ASTRONAUTS-ISS.png";
-import headerImg5 from "@/images/astronaut_with_fruit.jpg";
-import headerImg6 from "@/images/iss061e006682.webp";
-import headerImg7 from "@/images/wilmore-hague-williams.webp";
-import astronaut2Svg from "@/images/astronaut2.svg";
-import issLogo from "@/images/ISS_logo.png";
+const astronaut2Svg = "/images/astronaut2.svg";
+const issLogo = "/images/ISS_logo.png";
 import CommonQuestions from "@/components/CommonQuestions";
 import ConnectorSvg from "@/components/ConnectorSvg";
 import PlayerPlaceholder from "@/components/PlayerPlaceholder";
@@ -33,13 +26,13 @@ import { pickRandom } from "@/utils/pickRandom";
 import styles from "./App.module.css";
 
 const HEADER_IMAGES = [
-  headerImg1,
-  headerImg2,
-  headerImg3,
-  headerImg4,
-  headerImg5,
-  headerImg6,
-  headerImg7,
+  "/images/backgrounds/Fb39yuyEuLtH2W5k9BT7LA.jpg",
+  "/images/backgrounds/alexanderGerstWaving.webp",
+  "/images/backgrounds/egr-xqtw4aez5m2-1.jpg",
+  "/images/backgrounds/STARLINER-NASA-ASTRONAUTS-ISS.png",
+  "/images/backgrounds/astronaut_with_fruit.jpg",
+  "/images/backgrounds/iss061e006682.webp",
+  "/images/backgrounds/wilmore-hague-williams.webp",
 ];
 
 const QUESTION_POOL = [
@@ -668,7 +661,8 @@ function App(): React.JSX.Element {
                 </h1>
               </div>
               <p className={styles.appSubtitle}>
-                Search across astronaut Q&amp;A recordings onboard the International Space Station
+                Find your question among hundreds of astronaut interviews aboard the International
+                Space Station
               </p>
             </div>
           </div>

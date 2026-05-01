@@ -10,7 +10,7 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 // Local-dev plugin: serve video files from the external download directory
 // and static_assets/data files (search index, video dates, site stats).
 // ---------------------------------------------------------------------------
-const VIDEO_DIR = "D:/ask_anything_ia_videos_raw";
+const VIDEO_DIR = "D:/ask_anything_ia_videos_web";
 const DATA_DIR = path.resolve(__dirname, "static_assets", "data");
 
 function localMediaPlugin(): Plugin {
@@ -98,6 +98,7 @@ function localMediaPlugin(): Plugin {
 
 // https://vitejs.dev/config/
 export default defineConfig({
+  publicDir: path.resolve(__dirname, "src/public"),
   plugins: [react(), localMediaPlugin()],
   oxc: {
     jsx: { runtime: "automatic", importSource: "react" },
