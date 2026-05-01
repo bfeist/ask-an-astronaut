@@ -46,16 +46,22 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 32px;
-  height: 32px;
+  width: 44px;
+  height: 44px;
   padding: 0;
   color: var(--fg);
   border-radius: 10px;
+  flex-shrink: 0;
 }
 
 .videoClose:hover {
   background: var(--fg);
   color: var(--bg);
+}
+
+.videoClose:focus-visible {
+  outline: 2px solid var(--border-strong);
+  outline-offset: 2px;
 }
 
 .videoContainer {
@@ -107,18 +113,33 @@
   padding: 4px 6px;
   line-height: 1;
   flex-shrink: 0;
-  min-width: 32px;
-  min-height: 32px;
+  min-width: 44px;
+  min-height: 44px;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
+.videoPlayBtn:focus-visible {
+  outline: 2px solid rgb(255 255 255 / 70%);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* Bigger scrubber tap area on touch devices using a transparent padding trick */
 .videoScrubber {
   flex: 1;
   height: 4px;
   cursor: pointer;
   accent-color: #ffffff;
+}
+
+@media (pointer: coarse) {
+  .videoScrubber {
+    height: 20px;
+    padding: 8px 0;
+    background-clip: content-box;
+  }
 }
 
 .videoTimeDisplay {
@@ -212,6 +233,12 @@
   text-align: left;
   box-sizing: border-box;
   white-space: nowrap;
+  min-height: 36px;
+}
+
+.videoSeekBtn:focus-visible {
+  outline: 2px solid var(--border-strong);
+  outline-offset: 2px;
 }
 
 .seekShort {

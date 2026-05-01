@@ -383,8 +383,10 @@
     box-shadow 0.2s ease;
 }
 
-.resultsPanel:hover {
-  transform: translateY(-4px);
+@media (hover: hover) {
+  .resultsPanel:hover {
+    transform: translateY(-4px);
+  }
 }
 
 .playerPanel {
@@ -397,8 +399,10 @@
     box-shadow 0.2s ease;
 }
 
-.playerPanel:hover {
-  transform: translateY(-4px);
+@media (hover: hover) {
+  .playerPanel:hover {
+    transform: translateY(-4px);
+  }
 }
 
 /* --------------------------------------------------------------------------

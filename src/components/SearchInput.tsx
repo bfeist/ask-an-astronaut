@@ -14,6 +14,7 @@ interface Props {
   hero?: boolean;
   clearTrigger?: number;
   initialValue?: string;
+  focusOnMount?: boolean;
 }
 
 /**
@@ -30,6 +31,7 @@ export default function SearchInput({
   hero = false,
   clearTrigger,
   initialValue = "",
+  focusOnMount = true,
 }: Props): React.JSX.Element {
   const [value, setValue] = useState(initialValue);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -103,20 +105,22 @@ export default function SearchInput({
   return (
     <div className={styles.searchInputWrapper}>
       <input
-        type="text"
+        type="search"
         className={`${styles.searchInput}${hero ? ` ${styles.searchInputHero}` : ""}`}
         data-search-input
         value={value}
         onChange={handleChange}
         disabled={disabled}
         placeholder={placeholder}
+        aria-label="Search astronaut questions"
         // eslint-disable-next-line jsx-a11y/no-autofocus
-        autoFocus
+        autoFocus={focusOnMount}
+        autoComplete="off"
         spellCheck={false}
         onBlur={handleBlur}
       />
       {statusText && !value && (
-        <span className={styles.searchInputStatus} aria-hidden="true">
+        <span className={styles.searchInputStatus} role="status" aria-live="polite">
           {statusText}
         </span>
       )}

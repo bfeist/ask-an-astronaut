@@ -88,6 +88,7 @@ export default function ResultsList({
           className={`${styles.resultItem} ${selectedId === r.question.id ? styles.resultItemSelected : ""}`}
           onClick={() => onSelect(r)}
           type="button"
+          aria-pressed={selectedId === r.question.id}
         >
           <div className={styles.resultRank}>{i + 1}</div>
           <div className={styles.resultBody}>

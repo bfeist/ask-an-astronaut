@@ -484,11 +484,12 @@ function App(): React.JSX.Element {
     window.history.replaceState(null, "", qs ? `?${qs}` : window.location.pathname);
   }, [query, selectedResult]);
 
-  const scrollToSearchInputOnMobile = useCallback(() => {
+  const scrollToPlayerOnMobile = useCallback(() => {
     if (window.matchMedia("(pointer: coarse)").matches) {
-      // Only auto-scroll on mobile where the on-screen keyboard may cover the input
+      // On mobile, the grid is: search → player → results.
+      // After selecting a result, scroll the player into view.
       setTimeout(() => {
-        const el = mainRef.current?.querySelector("[data-search-input]") as HTMLElement | null;
+        const el = videoPanelElRef.current;
         if (!el) return;
         const top = el.getBoundingClientRect().top + window.scrollY - 8;
         window.scrollTo({ top, behavior: "smooth" });
@@ -499,9 +500,9 @@ function App(): React.JSX.Element {
   const handleSelect = useCallback(
     (result: SearchResult) => {
       setSelectedResult(result);
-      scrollToSearchInputOnMobile();
+      scrollToPlayerOnMobile();
     },
-    [scrollToSearchInputOnMobile]
+    [scrollToPlayerOnMobile]
   );
 
   const handleSelectFromTimeline = useCallback(
@@ -509,10 +510,10 @@ function App(): React.JSX.Element {
       const match = results.find((r) => r.question.id === questionId) ?? null;
       if (match) {
         setSelectedResult(match);
-        scrollToSearchInputOnMobile();
+        scrollToPlayerOnMobile();
       }
     },
-    [results, scrollToSearchInputOnMobile]
+    [results, scrollToPlayerOnMobile]
   );
 
   const handleCloseVideo = useCallback(() => {
@@ -696,6 +697,7 @@ function App(): React.JSX.Element {
               externalValue={suggestedQuery}
               clearTrigger={clearTrigger}
               initialValue={_initialUrlQuery}
+              focusOnMount={_initialUrlQuery === ""}
             />
 
             {!hasSearched && engineReady && (

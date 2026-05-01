@@ -31,6 +31,8 @@ function VideoPlayerInner({
 }): React.JSX.Element {
   const videoRef = useRef<HTMLVideoElement>(null);
   const hideTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  // Guard so both onLoadedMetadata and onLoadedData don't double-seek/play.
+  const hasInitializedRef = useRef(false);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [currentTime, setCurrentTime] = useState(0);
@@ -51,7 +53,13 @@ function VideoPlayerInner({
 
   const seekTarget = result.question.question_start ?? 0;
 
+  // Called on both onLoadedMetadata and onLoadedData. The ref guards against
+  // double-execution — onLoadedMetadata fires first (even on iOS without a user
+  // gesture), which fixes the "Loading video…" spinner that would hang forever
+  // on iPhone when opening a deep link (iOS blocks loadeddata until user taps).
   const handleLoaded = useCallback(() => {
+    if (hasInitializedRef.current) return;
+    hasInitializedRef.current = true;
     setIsLoading(false);
     setError(null);
     const video = videoRef.current;
@@ -152,7 +160,12 @@ function VideoPlayerInner({
     <div className={styles.videoPlayer}>
       <div className={styles.videoHeader}>
         <div className={styles.videoQuestionText}>{q.text}</div>
-        <button className={styles.videoClose} onClick={onClose} type="button" aria-label="Close">
+        <button
+          className={styles.videoClose}
+          onClick={onClose}
+          type="button"
+          aria-label="Close video player"
+        >
           <FontAwesomeIcon icon={faXmark} />
         </button>
       </div>
@@ -167,7 +180,11 @@ function VideoPlayerInner({
           className={`${styles.videoContainer}${controlsVisible ? ` ${styles.controlsVisible}` : ""}`}
           onPointerDown={handleContainerPointerDown}
         >
-          {isLoading && <div className={styles.videoLoading}>Loading video…</div>}
+          {isLoading && (
+            <div className={styles.videoLoading} role="status">
+              Loading video…
+            </div>
+          )}
           {waitingForUserPlay && (
             <button
               className={styles.bigPlayOverlay}
@@ -183,6 +200,7 @@ function VideoPlayerInner({
             className={styles.videoElement}
             src={result.videoUrl}
             playsInline
+            onLoadedMetadata={handleLoaded}
             onLoadedData={handleLoaded}
             onError={handleError}
             onTimeUpdate={handleTimeUpdate}
@@ -210,6 +228,8 @@ function VideoPlayerInner({
               value={currentTime}
               step={0.5}
               onChange={handleScrub}
+              aria-label="Video timeline"
+              aria-valuetext={`${formatTime(currentTime)} of ${formatTime(duration)}`}
             />
             <span className={styles.videoTimeDisplay}>
               {formatTime(currentTime)} / {formatTime(duration)}
@@ -236,9 +256,13 @@ function VideoPlayerInner({
                 }
               }}
               type="button"
+              aria-label="Seek to question start"
             >
-              ↻ <span className={styles.seekFull}>Seek to Question</span>
-              <span className={styles.seekShort}>Seek to Q</span>
+              <span aria-hidden="true">↻</span>{" "}
+              <span className={styles.seekFull}>Seek to Question</span>
+              <span className={styles.seekShort} aria-hidden="true">
+                Seek to Q
+              </span>
             </button>
           )}
         </div>
@@ -259,9 +283,13 @@ function VideoPlayerInner({
                 }
               }}
               type="button"
+              aria-label="Seek to answer start"
             >
-              ↻ <span className={styles.seekFull}>Seek to Answer</span>
-              <span className={styles.seekShort}>Seek to A</span>
+              <span aria-hidden="true">↻</span>{" "}
+              <span className={styles.seekFull}>Seek to Answer</span>
+              <span className={styles.seekShort} aria-hidden="true">
+                Seek to A
+              </span>
             </button>
           </div>
         )}

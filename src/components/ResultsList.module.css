@@ -56,6 +56,12 @@
   z-index: 1;
 }
 
+.resultItem:focus-visible {
+  outline: 2px solid rgb(0 132 255 / 80%);
+  outline-offset: -2px;
+  z-index: 2;
+}
+
 .resultItemSelected {
   background: radial-gradient(rgb(0 110 255 / 81%), rgb(0 80 185 / 43%));
   backdrop-filter: none !important;

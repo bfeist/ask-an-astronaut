@@ -33,6 +33,12 @@
   background: rgb(0 0 0);
 }
 
+/* Visible keyboard-focus ring for accessibility (WCAG 2.4.11) */
+.searchInput:focus-visible {
+  outline: 3px solid rgb(0 132 255 / 80%);
+  outline-offset: 2px;
+}
+
 .searchInput::placeholder {
   color: var(--text-muted);
   opacity: 0.5;
@@ -81,13 +87,19 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 32px;
-  height: 32px;
+  width: 44px;
+  height: 44px;
   padding: 0;
 }
 
 .searchClear:hover {
   color: var(--fg);
+}
+
+.searchClear:focus-visible {
+  outline: 2px solid rgb(0 132 255 / 80%);
+  outline-offset: 2px;
+  border-radius: 4px;
 }
 
 /* --------------------------------------------------------------------------
