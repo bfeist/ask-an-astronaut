@@ -102,10 +102,6 @@
   color: var(--text-muted);
 }
 
-.vqEvent {
-  text-transform: capitalize;
-}
-
 .vqItemActive {
   background: radial-gradient(rgb(0 110 255 / 81%), rgb(0 80 185 / 43%));
   color: #ffffff;

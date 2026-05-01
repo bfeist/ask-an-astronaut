@@ -95,7 +95,6 @@ export default function ResultsList({
             <div className={styles.resultText}>{r.question.text}</div>
             <div className={styles.resultMeta}>
               <ScoreBar score={r.score} />
-              <span className={styles.resultEvent}>{r.question.event_type.replace(/_/g, " ")}</span>
               <span>{formatTime(r.question.question_start)}</span>
             </div>
           </div>

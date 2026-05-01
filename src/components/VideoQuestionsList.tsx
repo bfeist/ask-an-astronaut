@@ -78,7 +78,6 @@ export default function VideoQuestionsList({
                 <div className={styles.vqText}>{q.text}</div>
                 <div className={styles.vqMeta}>
                   <span>{formatTime(q.question_start)}</span>
-                  <span className={styles.vqEvent}>{q.event_type.replace(/_/g, " ")}</span>
                 </div>
               </div>
             </button>

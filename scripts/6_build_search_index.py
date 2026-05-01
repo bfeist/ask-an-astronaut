@@ -125,7 +125,6 @@ def extract_questions(qa_text: dict, source_filename: str) -> tuple[list[dict], 
         questions.append({
             "text": text,
             "source_file": source_filename,
-            "event_type": qa_text.get("event_type", "unknown"),
             "pair_index": pair.get("index", 0),
             "question_start": q.get("start"),
             "question_end": q.get("end"),

@@ -293,10 +293,6 @@ function VideoPlayerInner({
             </button>
           </div>
         )}
-        <div className={styles.videoInfoRow}>
-          <span className={styles.videoInfoLabel}>Event type:</span>
-          <span>{q.event_type.replace(/_/g, " ")}</span>
-        </div>
       </div>
 
       {q.answer_text && (

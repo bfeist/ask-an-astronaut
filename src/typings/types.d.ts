@@ -9,7 +9,6 @@ interface IndexQuestion {
   id: number;
   text: string;
   source_file: string;
-  event_type: string;
   pair_index: number;
   question_start: number | null;
   question_end: number | null;

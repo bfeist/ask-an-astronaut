@@ -113,7 +113,7 @@ def format_result(rank: int, result: dict) -> str:
         f"  #{rank}  score={result['score']:.4f}",
         f"       Q: \"{result['text']}\"",
         f"       Source: {result['source_file']}",
-        f"       Event: {result['event_type']}  |  Pair #{result['pair_index']}",
+        f"       Pair #{result['pair_index']}",
         f"       Timing: question {result['question_start']:.1f}s–{result['question_end']:.1f}s",
     ]
     for i, ans in enumerate(result.get("answers", []), 1):

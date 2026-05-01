@@ -192,8 +192,6 @@ def process_qa_file(qa_path: Path, *, force: bool = False) -> bool:
     output = {
         "transcript_file": qa_data.get("transcript_file", transcript_path.name),
         "source_qa_file": qa_path.name,
-        "event_type": qa_data.get("event_type", "unknown"),
-        "event_type_confidence": qa_data.get("event_type_confidence", "unknown"),
         "extracted_at": qa_data.get("extracted_at"),
         "built_at": datetime.now(timezone.utc).isoformat(),
         "num_pairs": len(built_pairs),
