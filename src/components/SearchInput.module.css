@@ -44,6 +44,11 @@
   opacity: 0.5;
 }
 
+/* Hide Chrome's native clear button on search inputs */
+.searchInput::-webkit-search-cancel-button {
+  appearance: none;
+}
+
 .searchInput:disabled {
   cursor: not-allowed;
 }
