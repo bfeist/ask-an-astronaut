@@ -94,6 +94,30 @@ function App(): React.JSX.Element {
 
   const [showAbout, setShowAbout] = useState(false);
 
+  // True when viewport is ≤900px — drives modal vs inline player.
+  const [isMobile, setIsMobile] = useState(() => window.matchMedia("(width <= 900px)").matches);
+  useEffect(() => {
+    const mq = window.matchMedia("(width <= 900px)");
+    const handler = (e: MediaQueryListEvent) => setIsMobile(e.matches);
+    mq.addEventListener("change", handler);
+    return () => mq.removeEventListener("change", handler);
+  }, []);
+
+  // Prevent the page from scrolling once results are showing (both mobile and
+  // desktop). The results list scrolls internally; the modal handles the player.
+  // We set this on <html> rather than appRoot so it never clips animated elements.
+  useEffect(() => {
+    const html = document.documentElement;
+    if (hasSearched) {
+      html.style.overflow = "hidden";
+    } else {
+      html.style.overflow = "";
+    }
+    return () => {
+      html.style.overflow = "";
+    };
+  }, [hasSearched]);
+
   const commonQuestions = useMemo(() => pickRandom(QUESTION_POOL, 6), []);
 
   useEffect(() => {
@@ -483,25 +507,12 @@ function App(): React.JSX.Element {
   }, [query, selectedResult]);
 
   const scrollToPlayerOnMobile = useCallback(() => {
-    if (window.matchMedia("(pointer: coarse)").matches) {
-      // On mobile, the grid is: search → player → results.
-      // After selecting a result, scroll the player into view.
-      setTimeout(() => {
-        const el = videoPanelElRef.current;
-        if (!el) return;
-        const top = el.getBoundingClientRect().top + window.scrollY - 8;
-        window.scrollTo({ top, behavior: "smooth" });
-      }, 50);
-    }
+    // No-op: player is now a modal on mobile — no scrolling needed.
   }, []);
 
-  const handleSelect = useCallback(
-    (result: SearchResult) => {
-      setSelectedResult(result);
-      scrollToPlayerOnMobile();
-    },
-    [scrollToPlayerOnMobile]
-  );
+  const handleSelect = useCallback((result: SearchResult) => {
+    setSelectedResult(result);
+  }, []);
 
   const handleSelectFromTimeline = useCallback(
     (questionId: number) => {
@@ -607,8 +618,21 @@ function App(): React.JSX.Element {
   const timelineQuestions = useMemo(() => results.map((r) => r.question), [results]);
 
   return (
-    <div className={styles.appRoot}>
+    <div className={`${styles.appRoot}${hasSearched ? ` ${styles.appRootSearched}` : ""}`}>
       {showAbout && <AboutModal onClose={() => setShowAbout(false)} />}
+
+      {/* Mobile player modal — replaces the inline player panel on small screens */}
+      {isMobile && selectedResult && (
+        <div
+          className={styles.playerModal}
+          onClick={(e) => {
+            if (e.target === e.currentTarget) handleCloseVideo();
+          }}
+          role="presentation"
+        >
+          <VideoPlayer result={selectedResult} onClose={handleCloseVideo} />
+        </div>
+      )}
       <header
         ref={headerRef}
         className={`${styles.appHeader}${hasSearched ? "" : ` ${styles.appHeaderHero}`}`}
@@ -753,7 +777,8 @@ function App(): React.JSX.Element {
             </div>
           )}
 
-          {hasSearched && (
+          {/* Desktop only: inline player panel. Mobile uses the modal above. */}
+          {!isMobile && hasSearched && (
             <div className={styles.playerPanel} ref={playerPanelRef}>
               {selectedResult ? (
                 <VideoPlayer
@@ -764,6 +789,13 @@ function App(): React.JSX.Element {
               ) : (
                 <PlayerPlaceholder />
               )}
+            </div>
+          )}
+
+          {/* Mobile: placeholder always shown; VideoPlayer appears as modal */}
+          {isMobile && hasSearched && (
+            <div className={styles.playerPanel} ref={playerPanelRef}>
+              <PlayerPlaceholder />
             </div>
           )}
 

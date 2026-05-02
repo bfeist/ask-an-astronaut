@@ -295,18 +295,20 @@ function VideoPlayerInner({
         )}
       </div>
 
-      {q.answer_text && (
-        <div className={styles.videoAnswer}>
-          <div className={styles.videoAnswerLabel}>Answer transcript</div>
-          <p className={styles.videoAnswerText}>{q.answer_text}</p>
-        </div>
-      )}
+      <div className={styles.videoScrollBody}>
+        {q.answer_text && (
+          <div className={styles.videoAnswer}>
+            <div className={styles.videoAnswerLabel}>Answer transcript</div>
+            <p className={styles.videoAnswerText}>{q.answer_text}</p>
+          </div>
+        )}
 
-      <VideoQuestionsList
-        sourceFile={result.question.source_file}
-        activeQuestionId={activeQuestionId}
-        onSeek={handleSeekToQuestion}
-      />
+        <VideoQuestionsList
+          sourceFile={result.question.source_file}
+          activeQuestionId={activeQuestionId}
+          onSeek={handleSeekToQuestion}
+        />
+      </div>
     </div>
   );
 }

@@ -12,6 +12,33 @@
 .resultsList {
   border: 1px solid rgb(61 71 88);
   border-radius: 12px;
+  overflow-y: auto;
+  flex: 1;
+  min-height: 0;
+  overscroll-behavior: contain;
+  scrollbar-width: auto;
+  scrollbar-color: rgb(255 255 255 / 40%) rgb(255 255 255 / 6%);
+}
+
+/* Desktop keeps the same behaviour; the media query is no longer needed
+   since both layouts now rely on the same flex+overflow approach. */
+
+.resultsList::-webkit-scrollbar {
+  width: 10px;
+}
+
+.resultsList::-webkit-scrollbar-track {
+  background: rgb(255 255 255 / 6%);
+  border-radius: 5px;
+}
+
+.resultsList::-webkit-scrollbar-thumb {
+  background: rgb(255 255 255 / 40%);
+  border-radius: 5px;
+}
+
+.resultsList::-webkit-scrollbar-thumb:hover {
+  background: rgb(255 255 255 / 60%);
 }
 
 .resultItem {

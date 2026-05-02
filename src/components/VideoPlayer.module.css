@@ -198,6 +198,36 @@
   margin-top: 8px;
 }
 
+/* --------------------------------------------------------------------------
+   Mobile — modal layout: fixed panels + scrollable body below the video
+   -------------------------------------------------------------------------- */
+
+@media (width <= 900px) {
+  /* videoPanel fills the modal (modal drives sizing via flex) */
+  .videoPanel {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  /* videoPlayer fills the panel */
+  .videoPlayer {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  /* Answer transcript + questions list scroll; everything above is fixed */
+  .videoScrollBody {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+}
+
 .videoInfo {
   font-size: 12px;
   border: 1px solid var(--border);

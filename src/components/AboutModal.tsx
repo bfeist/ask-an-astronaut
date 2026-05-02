@@ -89,20 +89,20 @@ export default function AboutModal({ onClose }: AboutModalProps): React.JSX.Elem
           <p>
             <strong>Ask an Astronaut</strong> is a searchable archive of real questions asked of
             NASA astronauts during in-flight interviews, press conferences, and student Q&amp;A
-            sessions aboard the International Space Station — spanning more than two decades of
-            human spaceflight.
+            sessions aboard the International Space Station--spanning more than two decades of human
+            spaceflight.
           </p>
 
           <p>
-            Every question in the database was spoken by a real person — a student, a journalist, or
-            a curious member of the public — and answered live from orbit. The archive draws from
+            Every question in the database was spoken by a real person--a student, a journalist, or
+            a curious member of the public--and answered live from orbit. The archive draws from
             hundreds of hours of footage sourced from NASA&apos;s public video library on the
             Internet Archive.
           </p>
 
           <p>
             Rather than browsing by video, you can describe what you&apos;re curious about in your
-            own words and the search engine finds the closest real question ever asked — then jumps
+            own words and the search engine finds the closest real question ever asked--then jumps
             you straight to that moment in the recording. The matching is done entirely in your
             browser using a local AI model, so no search query ever leaves your device.
           </p>
@@ -111,7 +111,7 @@ export default function AboutModal({ onClose }: AboutModalProps): React.JSX.Elem
           <p>
             Audio from each video is transcribed using WhisperX, then individual questions and
             answers are extracted and timestamped. Each question is converted into a semantic
-            embedding — a numerical fingerprint of its meaning — using a compact transformer model.
+            embedding--a numerical fingerprint of its meaning--using a compact transformer model.
             When you type a query, the same model runs locally in your browser and finds the
             questions whose embeddings are closest to yours.
           </p>

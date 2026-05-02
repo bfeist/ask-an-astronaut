@@ -179,6 +179,7 @@
   z-index: 20;
   background: rgb(255 255 255 / 10%);
   border: 1px solid rgb(255 255 255 / 25%);
+  border-radius: 999px;
   color: rgb(255 255 255 / 80%);
   font-family: Exo, sans-serif;
   font-size: 13px;
@@ -378,6 +379,50 @@
   flex: none;
 }
 
+/* On desktop: give the root a definite height so 1fr in the grid can compute.
+   JS sets overflow:hidden on <html> to prevent page scrolling — no overflow:hidden
+   needed here, which avoids clipping animated / negatively-margined children. */
+@media (width > 900px) {
+  .appRootSearched {
+    height: 100vh; /* definite height → flex chain → 1fr grid row works */
+  }
+
+  .appRootSearched .app {
+    min-height: 0; /* let flex shrink below content size */
+  }
+
+  .appRootSearched .appMain {
+    flex: 1;
+    min-height: 0;
+    grid-template-rows: auto 1fr;
+  }
+
+  .appRootSearched .resultsPanel {
+    min-height: 0;
+  }
+}
+
+/* On mobile: same flex chain — results row is 1fr and scrolls internally. */
+@media (width <= 900px) {
+  .appRootSearched {
+    height: 100vh;
+  }
+
+  .appRootSearched .app {
+    min-height: 0;
+  }
+
+  .appRootSearched .appMain {
+    flex: 1;
+    min-height: 0;
+    grid-template-rows: auto auto 1fr;
+  }
+
+  .appRootSearched .resultsPanel {
+    min-height: 0;
+  }
+}
+
 @media (width <= 1464px) {
   .appHeaderHero .appTitleIconHero {
     display: none;
@@ -387,7 +432,7 @@
 @media (width <= 900px) {
   .appMain {
     grid-template-columns: 1fr;
-    grid-template-rows: auto auto auto;
+    grid-template-rows: auto auto 1fr;
     grid-template-areas:
       "search"
       "player"
@@ -395,10 +440,6 @@
     column-gap: 0;
     margin-top: 0;
     row-gap: 16px;
-  }
-
-  .playerPanel {
-    order: -1;
   }
 
   .appTitleIcon {
@@ -480,6 +521,37 @@
 
 .playerPanel:hover {
   transform: translateY(-4px);
+}
+
+/* Mobile player modal — full-screen overlay shown instead of the inline panel */
+.playerModal {
+  position: fixed;
+  inset: 0;
+  z-index: 500;
+  background: rgb(0 0 0 / 75%);
+  backdrop-filter: blur(4px);
+  display: flex;
+  flex-direction: column;
+  padding: 12px;
+  overflow: hidden;
+  animation: playerModalFadeIn 0.18s ease;
+}
+
+@keyframes playerModalFadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+/* VideoPlayer fills the modal — flex layout is handled inside VideoPlayer.module.css */
+.playerModal > * {
+  flex: 1;
+  min-height: 0;
+  width: 100%;
 }
 
 /* --------------------------------------------------------------------------
