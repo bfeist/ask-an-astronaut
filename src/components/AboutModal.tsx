@@ -87,14 +87,13 @@ export default function AboutModal({ onClose }: AboutModalProps): React.JSX.Elem
           </figure>
 
           <p>
-            <strong>Ask an Astronaut</strong> is a searchable archive of real questions asked of
-            NASA astronauts during in-flight interviews, press conferences, and student Q&amp;A
-            sessions aboard the International Space Station, spanning more than two decades of human
-            spaceflight.
-          </p>
-
-          <p>
-            This website was built by&nbsp;
+            <button onClick={onClose} type="button">
+              Ask an Astronaut
+            </button>{" "}
+            is a searchable archive of real questions asked of NASA astronauts during in-flight
+            interviews, press conferences, and student Q&amp;A sessions aboard the International
+            Space Station, spanning more than two decades of human spaceflight. It was built
+            by&nbsp;
             <a href="https://benfeist.com" target="_blank" rel="noopener noreferrer">
               Ben Feist
             </a>{" "}

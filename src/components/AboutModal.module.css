@@ -145,6 +145,20 @@
   text-decoration: underline;
 }
 
+.article button {
+  background: none;
+  border: none;
+  color: rgb(255 214 0);
+  text-decoration: none;
+  cursor: pointer;
+  padding: 0;
+  font: inherit;
+}
+
+.article button:hover {
+  text-decoration: underline;
+}
+
 /* Light theme */
 :global(:root[data-theme="light"]) .modal {
   background: rgb(245 245 247 / 97%);
