@@ -94,8 +94,8 @@ export default function AboutModal({ onClose }: AboutModalProps): React.JSX.Elem
           </p>
 
           <p>
-            Every question in the database was spoken by a real person — a student, a journalist,
-            or a curious member of the public — and answered live from orbit. The archive draws from
+            Every question in the database was spoken by a real person — a student, a journalist, or
+            a curious member of the public — and answered live from orbit. The archive draws from
             hundreds of hours of footage sourced from NASA&apos;s public video library on the
             Internet Archive.
           </p>
@@ -117,8 +117,11 @@ export default function AboutModal({ onClose }: AboutModalProps): React.JSX.Elem
           </p>
 
           <p>
-            This project is part of <a href="https://issinrealtime.org" target="_blank" rel="noopener noreferrer">ISS in Real Time</a>,
-            a collection of tools that bring the International Space Station closer to Earth.
+            This project is part of{" "}
+            <a href="https://issinrealtime.org" target="_blank" rel="noopener noreferrer">
+              ISS in Real Time
+            </a>
+            , a collection of tools that bring the International Space Station closer to Earth.
           </p>
         </article>
       </div>
