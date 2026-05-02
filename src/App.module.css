@@ -172,6 +172,82 @@
   display: none;
 }
 
+.aboutBtn {
+  position: absolute;
+  top: 18px;
+  right: 32px;
+  z-index: 20;
+  background: rgb(255 255 255 / 10%);
+  border: 1px solid rgb(255 255 255 / 25%);
+  color: rgb(255 255 255 / 80%);
+  font-family: Exo, sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  padding: 7px 16px;
+  cursor: pointer;
+  transition:
+    background 0.2s,
+    border-color 0.2s,
+    color 0.2s;
+}
+
+.aboutBtn:hover {
+  background: rgb(255 255 255 / 18%);
+  border-color: rgb(255 255 255 / 50%);
+  color: #ffffff;
+}
+
+:global(:root[data-theme="light"]) .aboutBtn {
+  background: rgb(0 0 0 / 6%);
+  border-color: rgb(0 0 0 / 20%);
+  color: rgb(0 0 0 / 70%);
+}
+
+:global(:root[data-theme="light"]) .aboutBtn:hover {
+  background: rgb(0 0 0 / 12%);
+  border-color: rgb(0 0 0 / 40%);
+  color: var(--fg);
+}
+
+@media (width <= 900px) {
+  .aboutBtn {
+    top: 10px;
+    right: 16px;
+    font-size: 11px;
+    padding: 5px 12px;
+  }
+}
+
+.aboutBtnIcon {
+  display: none;
+}
+
+@media (width <= 500px) {
+  .aboutBtn {
+    top: 12px;
+    right: 12px;
+    background: none;
+    border: none;
+    padding: 4px 6px;
+    font-size: 22px;
+  }
+
+  .aboutBtn:hover {
+    background: none;
+    border: none;
+  }
+
+  .aboutBtnLabel {
+    display: none;
+  }
+
+  .aboutBtnIcon {
+    display: inline;
+  }
+}
+
 .appTitleWrap {
   position: relative;
 }

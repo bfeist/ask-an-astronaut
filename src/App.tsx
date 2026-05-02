@@ -2,6 +2,9 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { gsap } from "gsap";
 const astronaut2Svg = "/images/astronaut2.svg";
 const issLogo = "/images/ISS_logo.png";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCircleQuestion } from "@fortawesome/free-solid-svg-icons";
+import AboutModal from "@/components/AboutModal";
 import CommonQuestions from "@/components/CommonQuestions";
 import ConnectorSvg from "@/components/ConnectorSvg";
 import PlayerPlaceholder from "@/components/PlayerPlaceholder";
@@ -88,6 +91,8 @@ function App(): React.JSX.Element {
   const [currentImageIndex, setCurrentImageIndex] = useState(() =>
     Math.floor(Math.random() * HEADER_IMAGES.length)
   );
+
+  const [showAbout, setShowAbout] = useState(false);
 
   const commonQuestions = useMemo(() => pickRandom(QUESTION_POOL, 6), []);
 
@@ -603,6 +608,7 @@ function App(): React.JSX.Element {
 
   return (
     <div className={styles.appRoot}>
+      {showAbout && <AboutModal onClose={() => setShowAbout(false)} />}
       <header
         ref={headerRef}
         className={`${styles.appHeader}${hasSearched ? "" : ` ${styles.appHeaderHero}`}`}
@@ -666,6 +672,17 @@ function App(): React.JSX.Element {
               </p>
             </div>
           </div>
+          {!hasSearched && (
+            <button
+              type="button"
+              className={styles.aboutBtn}
+              onClick={() => setShowAbout(true)}
+              aria-label="About this project"
+            >
+              <FontAwesomeIcon icon={faCircleQuestion} className={styles.aboutBtnIcon} />
+              <span className={styles.aboutBtnLabel}>About This Project</span>
+            </button>
+          )}
           <ThemeToggle />
         </div>
       </header>
