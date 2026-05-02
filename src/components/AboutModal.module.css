@@ -107,6 +107,16 @@
   margin: 8px 0 0;
 }
 
+.subheading2 {
+  font-family: Exo, sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  color: rgb(180 200 255);
+  margin: 16px 0 4px;
+}
+
 .figure {
   margin: 0;
 }
