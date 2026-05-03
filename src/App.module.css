@@ -399,6 +399,7 @@
 
   .appRootSearched .resultsPanel {
     min-height: 0;
+    overflow: hidden;
   }
 }
 
@@ -420,6 +421,7 @@
 
   .appRootSearched .resultsPanel {
     min-height: 0;
+    overflow: hidden;
   }
 }
 
@@ -517,10 +519,6 @@
   transition:
     transform 0.2s ease,
     box-shadow 0.2s ease;
-}
-
-.playerPanel:hover {
-  transform: translateY(-4px);
 }
 
 /* Mobile player modal — full-screen overlay shown instead of the inline panel */

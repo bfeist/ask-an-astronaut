@@ -6,7 +6,6 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircleQuestion } from "@fortawesome/free-solid-svg-icons";
 import AboutModal from "@/components/AboutModal";
 import CommonQuestions from "@/components/CommonQuestions";
-import ConnectorSvg from "@/components/ConnectorSvg";
 import PlayerPlaceholder from "@/components/PlayerPlaceholder";
 import QuestionsTimeline from "@/components/QuestionsTimeline";
 import ResultsList from "@/components/ResultsList";
@@ -24,7 +23,6 @@ import {
 } from "@/lib/searchEngine";
 import { useVideoDates } from "@/lib/useVideoDates";
 import { useSiteStats } from "@/lib/useSiteStats";
-import { computeConnectorPath, type ConnectorGeometry } from "@/utils/connector";
 import { pickRandom } from "@/utils/pickRandom";
 import styles from "./App.module.css";
 
@@ -151,12 +149,6 @@ function App(): React.JSX.Element {
   const timelineRowRef = useRef<HTMLDivElement>(null);
 
   const mainRef = useRef<HTMLElement>(null);
-  const selectedQuestionElRef = useRef<HTMLButtonElement | null>(null);
-  const resultsScrollElRef = useRef<HTMLDivElement | null>(null);
-  const videoPanelElRef = useRef<HTMLDivElement | null>(null);
-
-  const [connector, setConnector] = useState<ConnectorGeometry | null>(null);
-
   // Track the latest search request to avoid stale results
   const searchIdRef = useRef(0);
 
@@ -545,76 +537,6 @@ function App(): React.JSX.Element {
 
   const engineReady = indexReady && modelReady;
 
-  const recomputeConnector = useCallback(() => {
-    const main = mainRef.current;
-    const left = selectedQuestionElRef.current;
-    const right = videoPanelElRef.current;
-
-    if (!main || !left || !right) {
-      setConnector(null);
-      return;
-    }
-
-    setConnector(
-      computeConnectorPath(
-        main.getBoundingClientRect(),
-        left.getBoundingClientRect(),
-        right.getBoundingClientRect()
-      )
-    );
-  }, []);
-
-  const handleSelectedElementChange = useCallback(
-    (el: HTMLButtonElement | null) => {
-      selectedQuestionElRef.current = el;
-      recomputeConnector();
-    },
-    [recomputeConnector]
-  );
-
-  const handleResultsScrollContainerChange = useCallback(
-    (el: HTMLDivElement | null) => {
-      const prev = resultsScrollElRef.current;
-      if (prev && prev !== el) {
-        prev.removeEventListener("scroll", recomputeConnector);
-      }
-      resultsScrollElRef.current = el;
-      if (el) {
-        el.addEventListener("scroll", recomputeConnector, { passive: true });
-      }
-      recomputeConnector();
-    },
-    [recomputeConnector]
-  );
-
-  useEffect(() => {
-    window.addEventListener("resize", recomputeConnector);
-    window.addEventListener("scroll", recomputeConnector, { passive: true });
-    return () => {
-      window.removeEventListener("resize", recomputeConnector);
-      window.removeEventListener("scroll", recomputeConnector);
-    };
-  }, [recomputeConnector]);
-
-  useEffect(() => {
-    recomputeConnector();
-  }, [selectedResult, results, recomputeConnector]);
-
-  useEffect(() => {
-    if (typeof ResizeObserver === "undefined") return;
-    const main = mainRef.current;
-    if (!main) return;
-
-    const ro = new ResizeObserver(() => recomputeConnector());
-    ro.observe(main);
-    if (videoPanelElRef.current) ro.observe(videoPanelElRef.current);
-    if (selectedQuestionElRef.current) ro.observe(selectedQuestionElRef.current);
-
-    return () => ro.disconnect();
-  }, [recomputeConnector, selectedResult]);
-
-  const hasSelection = useMemo(() => selectedResult !== null, [selectedResult]);
-
   const timelineQuestions = useMemo(() => results.map((r) => r.question), [results]);
 
   return (
@@ -771,8 +693,6 @@ function App(): React.JSX.Element {
                 selectedId={selectedResult?.question.id ?? null}
                 isSearching={isSearching}
                 query={query}
-                onSelectedElementChange={handleSelectedElementChange}
-                onScrollContainerChange={handleResultsScrollContainerChange}
               />
             </div>
           )}
@@ -781,11 +701,7 @@ function App(): React.JSX.Element {
           {!isMobile && hasSearched && (
             <div className={styles.playerPanel} ref={playerPanelRef}>
               {selectedResult ? (
-                <VideoPlayer
-                  result={selectedResult}
-                  onClose={handleCloseVideo}
-                  panelRef={videoPanelElRef}
-                />
+                <VideoPlayer result={selectedResult} onClose={handleCloseVideo} />
               ) : (
                 <PlayerPlaceholder />
               )}
@@ -798,8 +714,6 @@ function App(): React.JSX.Element {
               <PlayerPlaceholder />
             </div>
           )}
-
-          {connector && hasSelection && <ConnectorSvg connector={connector} />}
         </main>
       </div>
     </div>
