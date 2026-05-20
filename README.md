@@ -1,5 +1,9 @@
 # Ask an Astronaut
 
+**[askanastronaut.issinrealtime.org](https://askanastronaut.issinrealtime.org)**
+
+![Ask an Astronaut](src/public/images/social_image.png)
+
 Part of [issinrealtime.org](https://issinrealtime.org). A searchable database of questions and answers from NASA astronaut Q&A sessions and interviews. Ask a question in natural language, find the closest real question asked by a student or journalist, and jump straight to that moment in the video.
 
 The frontend runs entirely client-side — no server required after the search index is built.
