@@ -163,8 +163,8 @@ regardless of what the other fields say.
 
 The downstream pipeline only processes these event types:
   1. student_qa — School downlinks, ARISS contacts, education inflight events where students ask an astronaut questions. Key signals in filename: "Education Inflight", "Inflight with [school/org]", "EDU_Inflight", "ARISS", "school", "student", "ham radio", any organization or media outlet name after "Inflight" (e.g. "Inflight_HCHSA", "Inflight_NOGGIN", "Inflight_CNBC").
-  2. press_conference — News conferences, pre-launch/post-flight/post-mission press briefings, flight readiness reviews with Q&A. Key signals in filename: "News_Conference", "News Conference", "Press_Conference", "Postflight", "Post-Flight", "Post_Flight", "Pre-Launch", "Flight_Readiness", "Mission_Overview_News".
-  3. media_interview — An astronaut discussing life in space with a specific TV station, newspaper, or radio outlet. Key signals in filename: "Discusses_Life_In_Space", "Talks_with", "Discuss", name of a TV/radio station (e.g. WTKR-TV, NPR, CNBC, KHQ-TV).
+  2. press_conference — News conferences, pre-launch/post-flight/post-mission press briefings, flight readiness reviews with Q&A. Includes pre-EVA/spacewalk preview briefings (these are press events about the EVA, not EVA footage). Key signals in filename: "News_Conference", "News Conference", "Press_Conference", "Postflight", "Post-Flight", "Post_Flight", "Pre-Launch", "Flight_Readiness", "Mission_Overview_News", "Preview_Briefing", "Briefing".
+  3. media_interview — An astronaut discussing life in space with a specific media outlet: TV station, radio station, newspaper, or print magazine (e.g. People Magazine, TIME, Scientific American). Key signals in filename: "Discusses_Life_In_Space", "Talks_with", "Discuss", "Interview_with", any named media outlet (e.g. WTKR-TV, NPR, CNBC, KHQ-TV, People_Magazine, Fox_News, CBS_News).
   4. panel — Panel discussions or roundtables with multiple speakers.
 
 KEEP files whose **filename** clearly matches one of the four types above.
@@ -172,10 +172,11 @@ KEEP files whose **filename** clearly matches one of the four types above.
 REJECT everything else, including:
   - Space to Ground weekly recap segments (narrated, no Q&A)
   - Launch, splashdown, landing, docking, undocking coverage
-  - Spacewalk / EVA coverage
+  - Spacewalk / EVA footage — the actual EVA operations themselves (e.g. "Spacewalk_58_part4"). NOTE: A "Preview Briefing" or "Briefing" about a spacewalk is a PRESS CONFERENCE and should be KEPT, not treated as EVA footage.
   - Highlights packages or montages
   - B-roll collections (but NOT if the filename says News Conference, Interview, etc.)
-  - Change of command ceremonies, welcome events, arrival events
+  - Change of command ceremonies, arrival/welcoming remarks, change of shift
+  - Purely ceremonial diplomatic or VIP calls with NO Q&A component (e.g. congratulatory calls or formal greetings where a head of state delivers a message and no questions are asked; NOT events where members of the public, students, or press also ask the astronaut questions)
   - Raw camera feeds, Earth views, flyovers
   - Animations, simulations
   - Training footage
@@ -183,6 +184,7 @@ REJECT everything else, including:
   - General "On-Orbit" content without a named event partner
   - Diary camera / GoPro footage
   - "Meet the astronaut" profile videos, "Science in Orbit" montages
+  - Cargo unpacking, equipment stowage, logistics footage
   - Anything else without clear Q&A or interview structure in the filename
 
 When in doubt, REJECT — it is much cheaper to miss a borderline file than to download and process thousands of irrelevant ones.
